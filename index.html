@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DynamicDashboard - by NovaBit Media Agency</title>
+  
+  <!-- Motor de React para el navegador -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Librerías de Excel y Gráficos -->
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+
+  <style>
+    body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+    const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = window.Recharts;
+
+    const COLOR_SISTEMA = '#005bb5'; 
+    const COLOR_FISICO = '#ffcc00';  
+    const COLOR_ALERTA = '#e63946';  
+
+    function App() {
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      const [loginError, setLoginError] = useState(false);
+
+      const [data, setData] = useState([]);
+      const [columns, setColumns] = useState([]);
+
+      const handleLogin = (e) => {
+        e.preventDefault();
+        if (username.toLowerCase() === 'emanuel' && password === 'arcor2026') {
+          setIsLoggedIn(true);
+          setLoginError(false);
+        } else {
+          setLoginError(true);
+        }
+      };
+
+      const handleLogout = () => {
+        setIsLoggedIn(false);
+        setData([]);
+        setColumns([]);
+        setUsername('');
+        setPassword('');
+      };
+
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const buffer = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(buffer, { type: 'array' });
+          const sheetName = workbook.SheetNames[0]; 
+          const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+          if (sheetData.length > 0) {
+            setData(sheetData);
+            setColumns(Object.keys(sheetData[0]));
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      };
+
+      const { catCol, sysCol, physCol, processedData, kpis } = useMemo(() => {
+        if (!data.length || !columns.length) return { catCol: null, sysCol: null, physCol: null, processedData: [], kpis: null };
+        
+        const cat = columns.find(col => typeof data[0][col] === 'string') || columns[0];
+        const numCols = columns.filter(col => typeof data[0][col] === 'number');
+        const sys = numCols.find(c => c.toLowerCase().includes('sist') || c.toLowerCase().includes('teor')) || numCols[0];
+        const phys = numCols.find(c => c.toLowerCase().includes('fisic') || c.toLowerCase().includes('real') || c.toLowerCase().includes('cont')) || numCols[1] || numCols[0];
+
+        let totalSys = 0;
+        let totalPhys = 0;
+        let diferenciasCount = 0;
+
+        const enrichedData = data.map(row => {
+          const vSys = Number(row[sys]) || 0;
+          const vPhys = Number(row[phys]) || 0;
+          const diferencia = vPhys - vSys;
+          
+          totalSys += vSys;
+          totalPhys += vPhys;
+          if (diferencia !== 0) diferenciasCount++;
+
+          return { ...row, [cat]: row[cat], ValorSistema: vSys, ValorFisico: vPhys, Diferencia: diferencia };
+        });
+
+        const exactitud = totalSys > 0 ? ((1 - (Math.abs(totalSys - totalPhys) / totalSys)) * 100).toFixed(1) : 100;
+
+        return { catCol: cat, sysCol: sys, physCol: phys, processedData: enrichedData, kpis: { totalSys, totalPhys, exactitud, diferenciasCount } };
+      }, [data, columns]);
+
+      if (!isLoggedIn) {
+        return (
+          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', backgroundImage: 'radial-gradient(circle at top right, #1e293b, #0f172a)' }}>
+            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '3rem', borderRadius: '16px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', width: '100%', maxWidth: '400px' }}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <div style={{ width: '60px', height: '60px', backgroundColor: '#005bb5', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', fontWeight: 'bold', fontSize: '20px' }}>NEMS</div>
+                <h2 style={{ color: '#1e293b', margin: '0 0 0.5rem 0' }}>Portal de Auditoría</h2>
+                <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>Gestión Logística y Control de Inventario</p>
+              </div>
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', color: '#475569', fontWeight: '500' }}>Usuario</label>
+                  <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} placeholder="Ingresa tu usuario" />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', color: '#475569', fontWeight: '500' }}>Contraseña</label>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} placeholder="••••••••" />
+                </div>
+                {loginError && <p style={{ color: '#e63946', fontSize: '13px', margin: 0, textAlign: 'center' }}>Credenciales incorrectas.</p>}
+                <button type="submit" style={{ width: '100%', padding: '0.875rem', backgroundColor: '#005bb5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem' }}>Iniciar Sesión</button>
+              </form>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh' }}>
+          <nav style={{ backgroundColor: '#ffffff', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '40px', height: '40px', backgroundColor: '#005bb5', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>NEMS</div>
+              <h1 style={{ color: '#0f172a', margin: 0, fontSize: '20px', fontWeight: '600' }}>Control de Aduana PT</h1>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ margin: 0, fontWeight: '600', color: '#1e293b', fontSize: '14px' }}>Emanuel</p>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>Administrador Logístico</p>
+              </div>
+              <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}>Cerrar Sesión</button>
+            </div>
+          </nav>
+
+          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem' }}>
+            <div style={{ marginBottom: '2rem' }}>
+              <h2 style={{ color: '#0f172a', margin: '0 0 0.5rem 0', fontSize: '24px' }}>Auditoría de Inventario Físico vs Sistema</h2>
+              <p style={{ color: '#64748b', margin: 0 }}>Carga el último corte de JD Edwards y comparalo con el conteo físico de planta.</p>
+            </div>
+
+            <div style={{ backgroundColor: '#ffffff', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)', marginBottom: '2rem', border: '1px dashed #cbd5e1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 8px 0', color: '#1e293b', fontSize: '16px' }}>Importar Datos de Conciliación</h3>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Formatos soportados: .xlsx, .csv (Debe incluir columna Sistema y Físico)</p>
+                </div>
+                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '6px' }} />
+              </div>
+            </div>
+
+            {data.length > 0 && sysCol && physCol && (
+              <div style={{ animation: 'fadeIn 0.5s ease-in' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  {/* Tarjetas KPI simplificadas para el HTML inline */}
+                  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Total Sistema</p>
+                    <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: '#0f172a' }}>{kpis.totalSys.toLocaleString()}</p>
+                  </div>
+                  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Total Físico</p>
+                    <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: '#0f172a' }}>{kpis.totalPhys.toLocaleString()}</p>
+                  </div>
+                  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Exactitud</p>
+                    <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: kpis.exactitud >= 98 ? '#10b981' : COLOR_ALERTA }}>{kpis.exactitud}%</p>
+                  </div>
+                  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                    <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Alertas de Diferencia</p>
+                    <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: kpis.diferenciasCount > 0 ? COLOR_ALERTA : '#10b981' }}>{kpis.diferenciasCount}</p>
+                  </div>
+                </div>
+
+                <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
+                  <h3 style={{ margin: '0 0 1.5rem 0', color: '#1e293b', fontSize: '16px' }}>Comparativa de Volúmenes por Material</h3>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey={catCol} tick={{fill: '#64748b', fontSize: 12}} angle={-45} textAnchor="end" height={80} interval={0} />
+                      <YAxis tick={{fill: '#64748b', fontSize: 12}} />
+                      <Tooltip cursor={{fill: '#f8fafc'}} />
+                      <Legend wrapperStyle={{ top: -10, right: 0 }} />
+                      <ReferenceLine y={0} stroke="#cbd5e1" />
+                      <Bar dataKey="ValorSistema" name="Sistema (JD Edwards)" fill={COLOR_SISTEMA} radius={[4, 4, 0, 0]} barSize={30} />
+                      <Bar dataKey="ValorFisico" name="Conteo Físico" fill={COLOR_FISICO} radius={[4, 4, 0, 0]} barSize={30} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                  <div style={{ padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+                    <h3 style={{ margin: 0, color: '#1e293b', fontSize: '16px' }}>Detalle Analítico de Desviaciones</h3>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                      <thead style={{ backgroundColor: '#f8fafc' }}>
+                        <tr>
+                          <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{catCol}</th>
+                          <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{sysCol}</th>
+                          <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{physCol}</th>
+                          <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>Desviación</th>
+                          <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {processedData.map((row, i) => {
+                          const tieneDiferencia = row.Diferencia !== 0;
+                          return (
+                            <tr key={i} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: tieneDiferencia ? '#fef2f2' : 'white' }}>
+                              <td style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: '600' }}>{row[catCol]}</td>
+                              <td style={{ padding: '1rem 1.5rem', color: '#475569' }}>{row.ValorSistema}</td>
+                              <td style={{ padding: '1rem 1.5rem', color: '#475569' }}>{row.ValorFisico}</td>
+                              <td style={{ padding: '1rem 1.5rem', color: tieneDiferencia ? COLOR_ALERTA : '#10b981', fontWeight: '600' }}>
+                                {row.Diferencia > 0 ? `+${row.Diferencia}` : row.Diferencia}
+                              </td>
+                              <td style={{ padding: '1rem 1.5rem' }}>
+                                <span style={{ padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: '600', backgroundColor: tieneDiferencia ? '#fee2e2' : '#dcfce3', color: tieneDiferencia ? COLOR_ALERTA : '#10b981' }}>
+                                  {tieneDiferencia ? 'Revisión Requerida' : 'Conciliado'}
+                                </span>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

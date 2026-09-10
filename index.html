@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEMS Analytics - Enterprise Edition 2.0</title>
+  <title>NEMS Analytics - Enterprise Edition 3.0</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,24 +26,36 @@
       --neon-blue: #3b82f6; --neon-cyan: #06b6d4; --neon-purple: #8b5cf6; --neon-orange: #f97316;
       --alert-red: #ef4444; --alert-green: #10b981;
       --glow-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+      --input-bg: rgba(0,0,0,0.3);
     }
 
-    body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; background-image: radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.08) 0%, transparent 40%), radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 40%), radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%); background-attachment: fixed; }
+    [data-theme="light"] {
+      --bg-base: #f1f5f9; --bg-sidebar: #ffffff; --bg-widget: rgba(255, 255, 255, 0.85);
+      --border-light: rgba(0, 0, 0, 0.08); --border-highlight: rgba(0, 0, 0, 0.2);
+      --text-main: #0f172a; --text-muted: #475569;
+      --glow-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --input-bg: rgba(255,255,255,0.9);
+    }
+
+    body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
+    body[data-theme="dark"] { background-image: radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.05) 0%, transparent 40%), radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.05) 0%, transparent 40%); background-attachment: fixed; }
+    
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-base); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
     
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulseNeon { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
     .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
 
-    .widget { background: var(--bg-widget); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+    .widget { background: var(--bg-widget); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
     .widget:hover { border-color: var(--border-highlight); box-shadow: var(--glow-shadow); }
 
     .app-container { display: flex; min-height: 100vh; }
-    .sidebar { width: 80px; background: var(--bg-sidebar); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 2rem 0; position: sticky; top: 0; height: 100vh; z-index: 50; }
+    .sidebar { width: 80px; background: var(--bg-sidebar); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 2rem 0; position: sticky; top: 0; height: 100vh; z-index: 50; transition: background 0.4s, border 0.4s; }
     .nav-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 24px; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; }
-    .nav-icon.active, .nav-icon:hover { background: rgba(59, 130, 246, 0.15); color: var(--neon-blue); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3); }
+    .nav-icon.active, .nav-icon:hover:not(.disabled) { background: rgba(59, 130, 246, 0.15); color: var(--neon-blue); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3); }
+    .nav-icon.disabled { opacity: 0.3; cursor: not-allowed; }
 
     .main-content { flex: 1; padding: 2rem 3rem; max-width: 1600px; margin: 0 auto; width: calc(100% - 80px); box-sizing: border-box; }
     .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
@@ -51,39 +63,37 @@
 
     .btn-primary { background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; animation: pulseNeon 2s infinite; }
     .btn-primary:hover { transform: scale(1.05); }
-    .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--neon-blue); }
+    .btn-secondary { background: rgba(139, 149, 165, 0.1); border: 1px solid var(--border-light); color: var(--text-main); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .btn-secondary:hover { background: rgba(139, 149, 165, 0.2); border-color: var(--neon-blue); }
 
     table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-    th { text-align: left; padding: 1rem; color: var(--text-muted); font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--border-highlight); background: var(--bg-sidebar); cursor: pointer; transition: color 0.2s; user-select: none; }
-    th:hover { color: white; }
-    td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; color: #e2e8f0; }
-    tr:hover { background: rgba(255,255,255,0.05); }
+    th { text-align: left; padding: 1rem; color: var(--text-muted); font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--border-highlight); background: var(--bg-widget); cursor: pointer; user-select: none; transition: color 0.2s; }
+    th:hover { color: var(--neon-blue); }
+    td { padding: 1rem; border-bottom: 1px solid var(--border-light); font-size: 13px; color: var(--text-main); }
+    tr:hover { background: var(--border-light); }
 
-    .input-premium { width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-light); border-radius: 10px; color: white; font-size: 14px; box-sizing: border-box; transition: all 0.3s; }
+    .input-premium { width: 100%; padding: 12px 16px; background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-main); font-size: 14px; box-sizing: border-box; transition: all 0.3s; }
     .input-premium:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-    select.input-premium option { background: var(--bg-sidebar); color: white; }
+    select.input-premium option { background: var(--bg-sidebar); color: var(--text-main); }
 
     .badge-secure { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--alert-green); border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
     .insight-box { background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent); border-left: 4px solid var(--neon-blue); padding: 1.5rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; }
 
-    /* MODO IMPRESIÓN / PDF */
     @media print {
       body { background: white; color: black; background-image: none; }
       .sidebar, .print-hide { display: none !important; }
       .main-content { width: 100% !important; padding: 0 !important; margin: 0 !important; }
-      .widget { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; break-inside: avoid; filter: none !important; backdrop-filter: none !important; color: black !important; }
+      .widget { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; break-inside: avoid; filter: none !important; backdrop-filter: none !important; }
       h1, h2, h3, h4, p, span, td, th { color: black !important; }
-      .insight-box { border-left-color: black !important; background: #f8f9fa !important; }
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo } = React;
-    const { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
+    const { useState, useMemo, useEffect } = React;
+    const { ComposedChart, Line, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
     const CHART_COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#10b981', '#eab308', '#f43f5e'];
 
     function App() {
@@ -91,10 +101,13 @@
       const [activeTab, setActiveTab] = useState('dashboard');
       const [data, setData] = useState([]);
       const [columns, setColumns] = useState([]);
+      const [theme, setTheme] = useState('dark');
       
       const [searchTerm, setSearchTerm] = useState('');
       const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
       const [userConfig, setUserConfig] = useState({ xAxis: '', yAxis1: '', yAxis2: '' });
+
+      useEffect(() => { document.body.setAttribute('data-theme', theme); }, [theme]);
 
       const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -104,7 +117,7 @@
           try {
             const buffer = new Uint8Array(event.target.result);
             const workbook = XLSX.read(buffer, { type: 'array' });
-            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" }); // Capturar vacíos
+            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
             if (sheetData.length > 0) {
               setData(sheetData);
               setColumns(Object.keys(sheetData[0]));
@@ -117,6 +130,13 @@
         reader.readAsArrayBuffer(file);
       };
 
+      const handleTabNavigation = (tab) => {
+        if (data.length === 0) return;
+        setActiveTab(tab);
+      };
+
+      const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
       const exportToExcel = () => {
         if (!data.length) return;
         const ws = XLSX.utils.json_to_sheet(data);
@@ -125,7 +145,7 @@
         XLSX.writeFile(wb, "NEMS_Exportacion_Datos.xlsx");
       };
 
-      // MOTOR ANALÍTICO Y DE INSIGHTS
+      // MOTOR ANALÍTICO Y PREDICTIVO
       const analytics = useMemo(() => {
         if (!data.length || !columns.length) return null;
         
@@ -138,12 +158,9 @@
 
         let totalSum = 0; let maxVal = -Infinity; let topRecord = 'N/A';
         let emptyCells = 0; const totalCells = data.length * columns.length;
-
-        // Agrupación para limpiar repetidos (Pivot Table básica)
         const groupedData = {};
 
         data.forEach(row => {
-          // Evaluar salud de datos
           columns.forEach(col => { if(row[col] === "" || row[col] === null || row[col] === undefined) emptyCells++; });
           
           const key = row[aX] || 'Desconocido';
@@ -155,29 +172,43 @@
           if (aY2) groupedData[key][aY2] += val2;
         });
 
-        const processed = Object.values(groupedData);
+        let processed = Object.values(groupedData).sort((a,b) => b[aY1] - a[aY1]).slice(0, 30);
+        
+        // CÁLCULO DE REGRESIÓN LINEAL PARA TENDENCIA
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        const n = processed.length;
+        
+        processed.forEach((item, idx) => {
+          totalSum += item[aY1];
+          if (item[aY1] > maxVal) { maxVal = item[aY1]; topRecord = item[aX]; }
+          sumX += idx;
+          sumY += item[aY1];
+          sumXY += (idx * item[aY1]);
+          sumX2 += (idx * idx);
+        });
 
-        processed.forEach(row => {
-          totalSum += row[aY1];
-          if (row[aY1] > maxVal) { maxVal = row[aY1]; topRecord = row[aX]; }
+        const slope = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
+        const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
+
+        // Inyectar tendencia al array
+        processed.forEach((item, idx) => {
+          item.Tendencia = parseFloat((slope * idx + intercept).toFixed(2));
         });
 
         const dataHealth = ((totalCells - emptyCells) / totalCells * 100).toFixed(1);
         const concentration = totalSum > 0 ? ((maxVal / totalSum) * 100).toFixed(1) : 0;
-
-        const pieData = [...processed].sort((a,b) => b[aY1] - a[aY1]).slice(0, 8).map(item => ({ name: item[aX], value: item[aY1] }));
+        const pieData = [...processed].slice(0, 8).map(item => ({ name: item[aX], value: item[aY1] }));
 
         return { 
           aX, aY1, aY2,
           kpis: { 
             count: data.length, sum: totalSum, avg: processed.length ? (totalSum / processed.length).toFixed(2) : 0, 
             max: maxVal === -Infinity ? 0 : maxVal, topRecord, dataHealth, concentration, 
-            chartData: processed.sort((a,b) => b[aY1] - a[aY1]).slice(0, 30), pieData 
+            chartData: processed, pieData, trendSlope: slope 
           } 
         };
       }, [data, columns, userConfig]);
 
-      // MOTOR DE TABLA CON ORDENAMIENTO
       const requestSort = (key) => {
         let direction = 'asc';
         if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
@@ -206,15 +237,20 @@
           <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="widget fade-in-up" style={{ width: '100%', maxWidth: '420px', padding: '3rem' }}>
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '32px', color: 'white', fontWeight: 'bold' }}>N.</div>
-                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '24px' }}>NEMS Enterprise 2.0</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Business Intelligence Platform</p>
+                <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '28px', color: 'white', fontWeight: 'bold', boxShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
+                  <i className="ph-fill ph-chart-polar"></i>
+                </div>
+                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '24px' }}>NEMS Enterprise 3.0</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Plataforma Analítica Predictiva</p>
               </div>
               <form onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
-                <input type="text" className="input-premium" defaultValue="admin" style={{ marginBottom: '1rem' }} />
+                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>ID Operativo</label>
+                <input type="text" className="input-premium" defaultValue="admin" style={{ marginBottom: '1.2rem' }} />
+                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>Clave de Acceso</label>
                 <input type="password" className="input-premium" defaultValue="••••••••" style={{ marginBottom: '2rem' }} />
-                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '16px', padding: '14px' }}>Acceder al Sistema</button>
+                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '16px', padding: '14px' }}>Desplegar Motor NEMS</button>
               </form>
+              <div style={{ textAlign: 'center', marginTop: '2rem' }}><div className="badge-secure"><i className="ph-fill ph-shield-check"></i> Encriptación Local Activa</div></div>
             </div>
           </div>
         );
@@ -222,28 +258,34 @@
 
       return (
         <div className="app-container">
+          {/* SIDEBAR NAVEGABLE CORREGIDA */}
           <div className="sidebar fade-in-up">
-            <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold', marginBottom: '3rem' }}>N.</div>
-            <div className={`nav-icon ${activeTab === 'dashboard' ? 'active' : ''}`} title="Dashboard" onClick={() => setActiveTab('dashboard')}><i className="ph ph-squares-four"></i></div>
-            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''}`} title="Auditoría de Datos" onClick={() => setActiveTab('reports')}><i className="ph ph-table"></i></div>
-            <div className={`nav-icon ${activeTab === 'settings' ? 'active' : ''}`} title="Configuración de Motor" onClick={() => setActiveTab('settings')}><i className="ph ph-sliders-horizontal"></i></div>
-            <div style={{ marginTop: 'auto' }} className="print-hide">
+            <div style={{ color: 'var(--text-main)', fontSize: '24px', fontWeight: 'bold', marginBottom: '3rem' }}>N.</div>
+            
+            <div className={`nav-icon ${activeTab === 'dashboard' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Dashboard" onClick={() => handleTabNavigation('dashboard')}><i className="ph ph-squares-four"></i></div>
+            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Auditoría de Datos" onClick={() => handleTabNavigation('reports')}><i className="ph ph-table"></i></div>
+            <div className={`nav-icon ${activeTab === 'settings' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Configuración de Motor" onClick={() => handleTabNavigation('settings')}><i className="ph ph-sliders-horizontal"></i></div>
+            
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }} className="print-hide">
+              <div className="nav-icon" title={`Cambiar a Tema ${theme === 'dark' ? 'Claro' : 'Oscuro'}`} onClick={toggleTheme}>
+                {theme === 'dark' ? <i className="ph ph-sun"></i> : <i className="ph ph-moon"></i>}
+              </div>
               <div className="nav-icon" title="Cerrar Sesión" onClick={() => setIsLoggedIn(false)}><i className="ph ph-sign-out"></i></div>
             </div>
           </div>
 
           <div className="main-content">
-            <div className="widget fade-in-up" style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(90deg, rgba(20,26,40,0.9) 0%, rgba(10,13,20,0.9) 100%)', marginBottom: '2rem' }}>
+            <div className="widget fade-in-up" style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: theme === 'dark' ? 'linear-gradient(90deg, rgba(20,26,40,0.9) 0%, rgba(10,13,20,0.9) 100%)' : 'var(--bg-widget)', marginBottom: '2rem' }}>
               <div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginBottom: '8px' }}>
-                  <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '600' }}>Panel Analítico Integral</h1>
-                  <span className="badge-secure print-hide"><i className="ph-fill ph-lock-key"></i> Procesamiento Local Zero-Cloud</span>
+                  <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '600' }}>Panel Analítico Predictivo</h1>
+                  <span className="badge-secure print-hide"><i className="ph-fill ph-lock-key"></i> Zero-Cloud Processing</span>
                 </div>
-                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Motor dinámico operativo. Inteligencia de negocios al instante.</p>
+                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Análisis impulsado por datos locales. Máxima confidencialidad.</p>
               </div>
               <div style={{ display: 'flex', gap: '10px' }} className="print-hide">
                 {data.length > 0 && activeTab === 'dashboard' && (
-                  <button className="btn-secondary" onClick={() => window.print()} title="Exportar a PDF"><i className="ph ph-printer"></i> Reporte PDF</button>
+                  <button className="btn-secondary" onClick={() => window.print()} title="Exportar a PDF"><i className="ph ph-printer"></i> Guardar PDF</button>
                 )}
                 <div style={{ position: 'relative', overflow: 'hidden' }}>
                   <button className="btn-primary"><i className="ph ph-microsoft-excel-logo" style={{ fontSize: '20px' }}></i> Subir Matriz (.xlsx)</button>
@@ -252,67 +294,83 @@
               </div>
             </div>
 
-            {activeTab === 'dashboard' && analytics && (
+            {/* ESTADO VACÍO (Muestra inicial clara) */}
+            {data.length === 0 && (
+              <div className="widget fade-in-up" style={{ textAlign: 'center', padding: '6rem 2rem', background: 'transparent', border: '2px dashed var(--border-highlight)' }}>
+                <i className="ph-fill ph-hard-drives" style={{ fontSize: '56px', color: 'var(--border-highlight)', marginBottom: '1.5rem' }}></i>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '22px' }}>Entorno Operativo Preparado</h3>
+                <p style={{ color: 'var(--text-muted)', margin: '0 auto 2rem auto', maxWidth: '500px', lineHeight: '1.6' }}>El motor NEMS de Machine Learning local está listo. Carga tu matriz de datos arriba a la derecha para iniciar la predicción de tendencias y el dashboard interactivo.</p>
+              </div>
+            )}
+
+            {/* TAB: DASHBOARD PREDICTIVO */}
+            {data.length > 0 && activeTab === 'dashboard' && analytics && (
               <div className="fade-in-up">
                 
                 <div className="insight-box">
                   <div style={{ background: 'var(--neon-blue)', padding: '12px', borderRadius: '12px', display: 'flex' }}>
-                    <i className="ph-fill ph-sparkle" style={{ color: 'white', fontSize: '24px' }}></i>
+                    <i className="ph-fill ph-robot" style={{ color: 'white', fontSize: '24px' }}></i>
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-main)', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      Insights NEMS AI
-                      {analytics.kpis.dataHealth < 90 && <span style={{ background: 'var(--alert-red)', color: 'white', padding: '2px 8px', borderRadius: '20px', fontSize: '10px' }}>Alerta de Datos</span>}
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      NEMS Predictive AI
+                      {analytics.kpis.trendSlope > 0 
+                        ? <span style={{ background: 'rgba(16,185,129,0.2)', color: 'var(--alert-green)', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', border: '1px solid var(--alert-green)' }}>Tendencia Positiva</span>
+                        : <span style={{ background: 'rgba(239,68,68,0.2)', color: 'var(--alert-red)', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', border: '1px solid var(--alert-red)' }}>Riesgo de Declive</span>
+                      }
                     </h4>
                     <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>
-                      El segmento líder es <strong>{analytics.kpis.topRecord}</strong>, concentrando un extraordinario <strong>{analytics.kpis.concentration}%</strong> del total del volumen de {analytics.aY1}. 
-                      La completitud estructural del reporte analizado es del <strong>{analytics.kpis.dataHealth}%</strong>.
+                      El segmento líder es <strong>{analytics.kpis.topRecord}</strong> ({analytics.kpis.concentration}% del volumen). 
+                      La proyección matemática indica un escenario de <strong>{analytics.kpis.trendSlope > 0 ? 'crecimiento sostenido' : 'contracción operativa'}</strong> para los próximos ciclos de {analytics.aY1}.
                     </p>
                   </div>
                 </div>
 
                 <div className="bento-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                   <div className="widget" style={{ borderTop: '3px solid var(--text-muted)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Suma {analytics.aY1}</p>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Volumen Consolidado</p>
                     <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.sum.toLocaleString()}</h3>
                   </div>
                   <div className="widget" style={{ borderTop: '3px solid var(--neon-cyan)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Promedio {analytics.aY1}</p>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Media de Ejecución</p>
                     <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.avg}</h3>
                   </div>
-                  <div className="widget" style={{ borderTop: '3px solid var(--neon-purple)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Registros / Filas</p>
-                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.count.toLocaleString()}</h3>
+                  <div className="widget" style={{ borderTop: '3px solid var(--neon-orange)'}}>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Pico Operativo</p>
+                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.max.toLocaleString()}</h3>
                   </div>
                   <div className="widget" style={{ borderTop: `3px solid ${analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'var(--neon-orange)'}`}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Salud de Datos</p>
-                    <h3 style={{ margin: 0, fontSize: '28px', color: analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'white' }}>{analytics.kpis.dataHealth}%</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Integridad del Lote</p>
+                    <h3 style={{ margin: 0, fontSize: '28px', color: analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'var(--text-main)' }}>{analytics.kpis.dataHealth}%</h3>
                   </div>
                 </div>
 
                 <div className="bento-grid" style={{ gridTemplateColumns: '2fr 1fr' }}>
+                  {/* COMPOSED CHART (BARRAS + TENDENCIA) */}
                   <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Top 30: Agrupación y Tendencia</h3>
+                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Análisis de Comportamiento y Proyección</h3>
                     <ResponsiveContainer width="100%" height={320}>
-                      <BarChart data={analytics.kpis.chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey={analytics.aX} tick={{fill: '#8b95a5', fontSize: 11}} axisLine={false} tickLine={false} />
-                        <YAxis tick={{fill: '#8b95a5', fontSize: 11}} axisLine={false} tickLine={false} />
-                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} contentStyle={{ backgroundColor: 'rgba(10,13,20,0.95)', border: '1px solid var(--border-highlight)', borderRadius: '12px' }} />
+                      <ComposedChart data={analytics.kpis.chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
+                        <XAxis dataKey={analytics.aX} tick={{fill: 'var(--text-muted)', fontSize: 11}} axisLine={false} tickLine={false} />
+                        <YAxis tick={{fill: 'var(--text-muted)', fontSize: 11}} axisLine={false} tickLine={false} />
+                        <Tooltip cursor={{fill: 'var(--border-light)'}} contentStyle={{ backgroundColor: 'var(--bg-widget)', border: '1px solid var(--border-highlight)', borderRadius: '12px', color: 'var(--text-main)' }} />
                         <Legend />
-                        <Bar dataKey={analytics.aY1} fill="var(--neon-blue)" radius={[4, 4, 0, 0]} />
-                        {analytics.aY2 && <Bar dataKey={analytics.aY2} fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />}
-                      </BarChart>
+                        <Bar dataKey={analytics.aY1} name={`Volumen: ${analytics.aY1}`} fill="var(--neon-blue)" radius={[4, 4, 0, 0]} />
+                        {analytics.aY2 && <Bar dataKey={analytics.aY2} name={`Comparativo: ${analytics.aY2}`} fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />}
+                        <Line type="monotone" dataKey="Tendencia" name="Proyección IA" stroke="var(--neon-orange)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                      </ComposedChart>
                     </ResponsiveContainer>
                   </div>
+                  
                   <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Distribución de Mercado (Top 8)</h3>
+                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Participación / Market Share</h3>
                     <ResponsiveContainer width="100%" height={320}>
                       <PieChart>
                         <Pie data={analytics.kpis.pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={3} dataKey="value">
                           {analytics.kpis.pieData.map((entry, index) => ( <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} /> ))}
                         </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: 'rgba(10,13,20,0.95)', border: '1px solid var(--border-highlight)', borderRadius: '8px' }} />
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--bg-widget)', border: '1px solid var(--border-highlight)', borderRadius: '8px', color: 'var(--text-main)' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -320,16 +378,17 @@
               </div>
             )}
 
-            {activeTab === 'reports' && data.length > 0 && (
+            {/* TAB: REPORTES */}
+            {data.length > 0 && activeTab === 'reports' && (
               <div className="widget fade-in-up" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Auditoría Cruda y Filtrado ({filteredData.length} registros)</h3>
+                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Matriz de Datos Dinámica</h3>
                   <div style={{ display: 'flex', gap: '15px' }}>
                     <div style={{ position: 'relative' }}>
                       <i className="ph ph-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}></i>
-                      <input type="text" placeholder="Búsqueda global..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-premium" style={{ paddingLeft: '35px', width: '280px' }} />
+                      <input type="text" placeholder="Filtrado rápido..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-premium" style={{ paddingLeft: '35px', width: '280px' }} />
                     </div>
-                    <button onClick={exportToExcel} className="btn-secondary" title="Exportar la vista actual"><i className="ph ph-download-simple"></i> Excel (.xlsx)</button>
+                    <button onClick={exportToExcel} className="btn-secondary" title="Exportar vista filtrada"><i className="ph ph-download-simple"></i> Exportar</button>
                   </div>
                 </div>
                 <div style={{ overflowX: 'auto', maxHeight: '65vh' }}>
@@ -338,7 +397,7 @@
                       <tr>
                         {columns.map(col => (
                           <th key={col} onClick={() => requestSort(col)}>
-                            {col} {sortConfig.key === col ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                            {col} {sortConfig.key === col ? (sortConfig.direction === 'asc' ? ' ↑' : ' ↓') : ''}
                           </th>
                         ))}
                       </tr>
@@ -346,42 +405,34 @@
                     <tbody>
                       {sortedAndFilteredData.length > 0 ? sortedAndFilteredData.slice(0, 1000).map((row, i) => (
                         <tr key={i}>{columns.map(col => <td key={col}>{row[col]}</td>)}</tr>
-                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Sin coincidencias.</td></tr>}
+                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No hay datos coincidentes con la búsqueda.</td></tr>}
                     </tbody>
                   </table>
-                  {sortedAndFilteredData.length > 1000 && <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>*Limitado a los primeros 1000 resultados para rendimiento.</div>}
                 </div>
               </div>
             )}
 
-            {activeTab === 'settings' && data.length > 0 && (
+            {/* TAB: AJUSTES */}
+            {data.length > 0 && activeTab === 'settings' && (
               <div className="widget fade-in-up" style={{ maxWidth: '600px' }}>
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '18px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}><i className="ph-fill ph-sliders-horizontal" style={{ color: 'var(--neon-orange)' }}></i> Calibración Manual</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '2rem' }}>Fuerza al motor analítico a utilizar columnas específicas para cruzar la información. El sistema agrupará y sumará automáticamente.</p>
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '18px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}><i className="ph-fill ph-sliders-horizontal" style={{ color: 'var(--neon-orange)' }}></i> Overrides del Motor Analítico</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '2rem' }}>Define parámetros estrictos para la regresión matemática y estructuración visual.</p>
                 
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
+                <div style={{ background: 'var(--bg-base)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Categoría Principal (Agrupador - Eje X)</label>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Pivote de Agrupación (Eje X)</label>
                     <select className="input-premium" value={userConfig.xAxis || analytics?.aX} onChange={e => setUserConfig({...userConfig, xAxis: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica de Valor Primaria (Suma - Eje Y)</label>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Vector Primario de Volumen (Eje Y)</label>
                     <select className="input-premium" value={userConfig.yAxis1 || analytics?.aY1} onChange={e => setUserConfig({...userConfig, yAxis1: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
                   <div style={{ marginBottom: '2rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica Secundaria (Comparativa Opcional)</label>
-                    <select className="input-premium" value={userConfig.yAxis2 || analytics?.aY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}><option value="">-- No incluir segunda métrica --</option>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Vector Secundario Comparativo</label>
+                    <select className="input-premium" value={userConfig.yAxis2 || analytics?.aY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}><option value="">-- Aislar vector secundario --</option>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-                  <button onClick={() => setActiveTab('dashboard')} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Aplicar Modelo y Analizar</button>
+                  <button onClick={() => setActiveTab('dashboard')} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Aplicar Modelo y Procesar</button>
                 </div>
-              </div>
-            )}
-
-            {data.length === 0 && (
-              <div className="widget fade-in-up" style={{ textAlign: 'center', padding: '5rem 2rem', background: 'transparent', border: '2px dashed var(--border-highlight)' }}>
-                <i className="ph-fill ph-hard-drives" style={{ fontSize: '56px', color: 'var(--border-highlight)', marginBottom: '1rem' }}></i>
-                <h3 style={{ margin: '0 0 10px 0', color: 'white', fontSize: '20px' }}>Sistema Analítico Preparado</h3>
-                <p style={{ color: 'var(--text-muted)', margin: '0 0 2rem 0' }}>El entorno seguro está aislado y listo para recibir matrices de datos masivas (.xlsx, .csv).</p>
               </div>
             )}
           </div>

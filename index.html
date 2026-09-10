@@ -3,52 +3,290 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Auditoría - NEMS</title>
+  <title>NEMS Dashboard - Auditoría PT</title>
   
+  <!-- Fuentes modernas (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Iconos Phosphor (Modernos y limpios) -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
   <!-- Motor de React y Babel -->
   <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@7.23.0/babel.min.js"></script>
   
-  <!-- Librería Oficial de Excel (SheetJS) y Gráficos -->
+  <!-- Librería Oficial de Excel y Gráficos (Versión Estable 1.8.5) -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
   <script src="https://unpkg.com/recharts@1.8.5/umd/Recharts.min.js"></script>
 
   <style>
-    body { margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; background-color: #0f172a; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    #error-box { color: #ff8080; padding: 2rem; font-family: monospace; }
+    /* VARIABLES DE DISEÑO PREMIUM (Basado en la imagen adjunta) */
+    :root {
+      --bg-base: #0a0d14;
+      --bg-sidebar: #05070a;
+      --bg-widget: rgba(20, 26, 40, 0.6);
+      --border-light: rgba(255, 255, 255, 0.05);
+      --border-highlight: rgba(255, 255, 255, 0.15);
+      
+      --text-main: #f8fafc;
+      --text-muted: #8b95a5;
+      
+      --neon-blue: #3b82f6;
+      --neon-cyan: #06b6d4;
+      --neon-purple: #8b5cf6;
+      --neon-orange: #f97316;
+      
+      --alert-red: #ef4444;
+      --alert-green: #10b981;
+      
+      --glow-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      overflow-x: hidden;
+      /* Luces de fondo estilo halo */
+      background-image: 
+        radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* SCROLLBAR PERSONALIZADA */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* ANIMACIONES */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulseNeon {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* CLASES DE DISEÑO */
+    .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
+    .widget {
+      background: var(--bg-widget);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .widget:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+      box-shadow: var(--glow-shadow);
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 80px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 50;
+    }
+    .nav-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 24px;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-icon.active, .nav-icon:hover {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--neon-blue);
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* BENTO GRID (Como en la imagen) */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .bento-col-2 {
+      grid-column: span 2;
+    }
+    @media (max-width: 1024px) {
+      .bento-col-2 { grid-column: span 1; }
+    }
+
+    /* INPUT FILE CUSTOM */
+    .file-upload-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .file-upload-btn {
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      animation: pulseNeon 2s infinite;
+    }
+    .file-upload-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+    }
+    .file-upload-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+      height: 100%;
+    }
+
+    /* TABLA PREMIUM */
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      padding: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      font-size: 14px;
+    }
+    tr { transition: background 0.2s; }
+    tr:hover { background: rgba(255,255,255,0.02); }
+
+    /* ESTADO DE INICIO DE SESIÓN */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 1s ease;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      padding: 3rem;
+      border-radius: 24px;
+    }
+    .input-premium {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: all 0.3s;
+      margin-bottom: 1.5rem;
+    }
+    .input-premium:focus {
+      outline: none;
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    }
+
+    /* DETECTOR DE ERRORES */
+    #error-box { color: var(--alert-red); padding: 2rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid var(--alert-red); margin: 2rem; }
   </style>
 </head>
 <body>
   <div id="root">
-    <div style="color: white; padding: 2rem; text-align: center;">Cargando aplicación... Si esto no desaparece en 5 segundos, hay un error de conexión.</div>
+    <div style="color: white; padding: 2rem; text-align: center; font-family: sans-serif;">Inicializando entorno seguro NEMS...</div>
   </div>
 
-  <!-- Detector de errores visual -->
   <script>
     window.addEventListener('error', function(e) {
-      document.getElementById('root').innerHTML = '<div id="error-box"><h3>Oops! Ocurrió un error:</h3><p>' + e.message + '</p></div>';
+      document.getElementById('root').innerHTML = '<div id="error-box"><h3 style="margin-top:0">Error de inicialización:</h3><p>' + e.message + '</p></div>';
     });
   </script>
 
   <script type="text/babel">
     try {
-      const { useState, useMemo } = React;
+      const { useState, useMemo, useEffect } = React;
       const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = window.Recharts;
-
-      const COLOR_SISTEMA = '#005bb5'; 
-      const COLOR_FISICO = '#ffcc00';  
-      const COLOR_ALERTA = '#e63946';  
 
       function App() {
         const [isLoggedIn, setIsLoggedIn] = useState(false);
         const [username, setUsername] = useState('');
         const [password, setPassword] = useState('');
         const [loginError, setLoginError] = useState(false);
+        
         const [data, setData] = useState([]);
         const [columns, setColumns] = useState([]);
+        
+        // Reloj en tiempo real
+        const [time, setTime] = useState(new Date());
+        useEffect(() => {
+          const timer = setInterval(() => setTime(new Date()), 1000);
+          return () => clearInterval(timer);
+        }, []);
 
         const handleLogin = (e) => {
           e.preventDefault();
@@ -58,14 +296,6 @@
           } else {
             setLoginError(true);
           }
-        };
-
-        const handleLogout = () => {
-          setIsLoggedIn(false);
-          setData([]);
-          setColumns([]);
-          setUsername('');
-          setPassword('');
         };
 
         const handleFileUpload = (e) => {
@@ -81,8 +311,6 @@
               if (sheetData.length > 0) {
                 setData(sheetData);
                 setColumns(Object.keys(sheetData[0]));
-              } else {
-                alert("El archivo Excel está vacío.");
               }
             } catch (err) {
               alert("Error al leer el archivo Excel: " + err.message);
@@ -121,131 +349,185 @@
           return { catCol: cat, sysCol: sys, physCol: phys, processedData: enrichedData, kpis: { totalSys, totalPhys, exactitud, diferenciasCount } };
         }, [data, columns]);
 
+        // PANTALLA DE LOGIN PREMIUM
         if (!isLoggedIn) {
           return (
-            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', backgroundImage: 'radial-gradient(circle at top right, #1e293b, #0f172a)' }}>
-              <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '3rem', borderRadius: '16px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', width: '100%', maxWidth: '400px' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                  <div style={{ width: '60px', height: '60px', backgroundColor: '#005bb5', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', fontWeight: 'bold', fontSize: '20px' }}>NEMS</div>
-                  <h2 style={{ color: '#1e293b', margin: '0 0 0.5rem 0' }}>Portal de Auditoría</h2>
-                  <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>Gestión Logística y Control de Inventario</p>
+            <div className="login-container">
+              <div className="widget login-box fade-in-up">
+                <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+                  <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '28px', color: 'white', fontWeight: 'bold', boxShadow: '0 0 30px rgba(6, 182, 212, 0.4)' }}>
+                    <i className="ph-fill ph-infinity"></i>
+                  </div>
+                  <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '26px', fontWeight: '600' }}>NEMS Secure Access</h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '15px', margin: 0 }}>Módulo Logístico Aduana PT</p>
                 </div>
-                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', color: '#475569', fontWeight: '500' }}>Usuario</label>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} placeholder="Ingresa tu usuario" />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', color: '#475569', fontWeight: '500' }}>Contraseña</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} placeholder="••••••••" />
-                  </div>
-                  {loginError && <p style={{ color: '#e63946', fontSize: '13px', margin: 0, textAlign: 'center' }}>Credenciales incorrectas.</p>}
-                  <button type="submit" style={{ width: '100%', padding: '0.875rem', backgroundColor: '#005bb5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem' }}>Iniciar Sesión</button>
+                
+                <form onSubmit={handleLogin}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>ID de Operador</label>
+                  <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="input-premium" placeholder="Ingresa tu ID" />
+                  
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>Clave de Acceso</label>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input-premium" placeholder="••••••••" />
+                  
+                  {loginError && <p style={{ color: 'var(--alert-red)', fontSize: '13px', marginTop: '-10px', marginBottom: '15px', textAlign: 'center' }}><i className="ph ph-warning-circle"></i> Credenciales denegadas</p>}
+                  
+                  <button type="submit" style={{ width: '100%', padding: '16px', background: 'white', color: 'black', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s' }} onMouseOver={e => e.currentTarget.style.boxShadow = '0 0 20px rgba(255,255,255,0.4)'} onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}>
+                    Verificar Sistema
+                  </button>
                 </form>
               </div>
             </div>
           );
         }
 
+        // PANTALLA PRINCIPAL (DASHBOARD)
         return (
-          <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh', paddingBottom: '3rem' }}>
-            <nav style={{ backgroundColor: '#ffffff', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '40px', height: '40px', backgroundColor: '#005bb5', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>NEMS</div>
-                <h1 style={{ color: '#0f172a', margin: 0, fontSize: '20px', fontWeight: '600' }}>Control de Aduana PT</h1>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ margin: 0, fontWeight: '600', color: '#1e293b', fontSize: '14px' }}>Emanuel</p>
-                  <p style={{ margin: 0, color: '#64748b', fontSize: '12px' }}>Administrador Logístico</p>
+          <div className="app-container">
+            {/* SIDEBAR */}
+            <div className="sidebar fade-in-up">
+              <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold', marginBottom: '3rem' }}>N.</div>
+              <div className="nav-icon active" title="Dashboard"><i className="ph ph-squares-four"></i></div>
+              <div className="nav-icon" title="Reportes"><i className="ph ph-chart-line-up"></i></div>
+              <div className="nav-icon" title="Ajustes"><i className="ph ph-gear"></i></div>
+              <div style={{ marginTop: 'auto' }}>
+                <div className="nav-icon" title="Cerrar Sesión" onClick={() => setIsLoggedIn(false)}><i className="ph ph-sign-out"></i></div>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--neon-blue)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '14px', border: '2px solid var(--border-light)' }}>
+                  E
                 </div>
-                <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}>Cerrar Sesión</button>
               </div>
-            </nav>
+            </div>
 
-            <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem' }}>
-              <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ color: '#0f172a', margin: '0 0 0.5rem 0', fontSize: '24px' }}>Auditoría de Inventario Físico vs Sistema</h2>
-                <p style={{ color: '#64748b', margin: 0 }}>Carga el último corte de JD Edwards y comparalo con el conteo físico de planta.</p>
-              </div>
-
-              <div style={{ backgroundColor: '#ffffff', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)', marginBottom: '2rem', border: '1px dashed #cbd5e1' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* CONTENIDO PRINCIPAL */}
+            <div className="main-content">
+              
+              {/* TOP HEADER & WELCOME */}
+              <div className="bento-grid fade-in-up">
+                
+                {/* Saludo (Ocupa 2 columnas) */}
+                <div className="widget bento-col-2" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(135deg, rgba(20,26,40,0.8), rgba(6,182,212,0.1))' }}>
                   <div>
-                    <h3 style={{ margin: '0 0 8px 0', color: '#1e293b', fontSize: '16px' }}>Importar Datos de Conciliación</h3>
-                    <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Formatos soportados: .xlsx, .csv (Debe incluir columna Sistema y Físico)</p>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 5px 0', fontSize: '15px' }}>{time.getHours() < 12 ? 'Buenos días,' : time.getHours() < 19 ? 'Buenas tardes,' : 'Buenas noches,'}</p>
+                    <h1 style={{ margin: 0, fontSize: '32px', fontWeight: '600' }}>Emanuel</h1>
+                    <p style={{ color: 'var(--text-muted)', margin: '8px 0 0 0', fontSize: '14px' }}>Control de flujo y existencias en Aduana PT.</p>
                   </div>
-                  <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '6px' }} />
+                  
+                  {/* Botón Importar Excel */}
+                  <div className="file-upload-wrapper">
+                    <button className="file-upload-btn">
+                      <i className="ph ph-file-xls" style={{ fontSize: '20px' }}></i>
+                      <span>Procesar Corte JDE</span>
+                    </button>
+                    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} />
+                  </div>
+                </div>
+
+                {/* Status System */}
+                <div className="widget" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ color: 'var(--text-muted)', margin: 0 }}>Estado del Sistema</p>
+                    <i className="ph-fill ph-check-circle" style={{ color: 'var(--neon-cyan)', fontSize: '20px' }}></i>
+                  </div>
+                  <h2 style={{ fontSize: '24px', margin: '15px 0 5px 0' }}>{time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h2>
+                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>{time.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
               </div>
 
+              {/* DASHBOARD DATOS (Solo aparece si hay Excel cargado) */}
               {data.length > 0 && sysCol && physCol && (
-                <div style={{ animation: 'fadeIn 0.5s ease-in' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                      <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Total Sistema</p>
-                      <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: '#0f172a' }}>{kpis.totalSys.toLocaleString()}</p>
+                <div className="fade-in-up delay-1">
+                  
+                  {/* KPIs ROW */}
+                  <div className="bento-grid">
+                    <div className="widget">
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Existencia Teórica (Sist.)</p>
+                        <i className="ph ph-database" style={{ color: 'var(--neon-blue)', fontSize: '20px' }}></i>
+                      </div>
+                      <h3 style={{ margin: '15px 0 0 0', fontSize: '32px', color: 'white' }}>{kpis.totalSys.toLocaleString()}</h3>
                     </div>
-                    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                      <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Total Físico</p>
-                      <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: '#0f172a' }}>{kpis.totalPhys.toLocaleString()}</p>
+
+                    <div className="widget">
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Conteo Físico Real</p>
+                        <i className="ph ph-package" style={{ color: 'var(--neon-orange)', fontSize: '20px' }}></i>
+                      </div>
+                      <h3 style={{ margin: '15px 0 0 0', fontSize: '32px', color: 'white' }}>{kpis.totalPhys.toLocaleString()}</h3>
                     </div>
-                    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                      <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Exactitud</p>
-                      <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: kpis.exactitud >= 98 ? '#10b981' : COLOR_ALERTA }}>{kpis.exactitud}%</p>
-                    </div>
-                    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                      <p style={{ margin: '0 0 0.5rem 0', color: '#64748b', fontSize: '14px' }}>Alertas de Diferencia</p>
-                      <p style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: kpis.diferenciasCount > 0 ? COLOR_ALERTA : '#10b981' }}>{kpis.diferenciasCount}</p>
+
+                    <div className="widget" style={{ borderLeft: `3px solid ${kpis.exactitud >= 98 ? 'var(--alert-green)' : 'var(--alert-red)'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Exactitud de Inventario</p>
+                        <i className="ph ph-target" style={{ color: kpis.exactitud >= 98 ? 'var(--alert-green)' : 'var(--alert-red)', fontSize: '20px' }}></i>
+                      </div>
+                      <h3 style={{ margin: '15px 0 0 0', fontSize: '32px', color: kpis.exactitud >= 98 ? 'var(--alert-green)' : 'var(--alert-red)' }}>{kpis.exactitud}%</h3>
                     </div>
                   </div>
 
-                  <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
-                    <h3 style={{ margin: '0 0 1.5rem 0', color: '#1e293b', fontSize: '16px' }}>Comparativa de Volúmenes por Material</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                      <BarChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                        <XAxis dataKey={catCol} tick={{fill: '#64748b', fontSize: 12}} angle={-45} textAnchor="end" height={80} interval={0} />
-                        <YAxis tick={{fill: '#64748b', fontSize: 12}} />
-                        <Tooltip cursor={{fill: '#f8fafc'}} />
-                        <Legend wrapperStyle={{ top: -10, right: 0 }} />
-                        <ReferenceLine y={0} stroke="#cbd5e1" />
-                        <Bar dataKey="ValorSistema" name="Sistema" fill={COLOR_SISTEMA} radius={[4, 4, 0, 0]} barSize={30} />
-                        <Bar dataKey="ValorFisico" name="Físico" fill={COLOR_FISICO} radius={[4, 4, 0, 0]} barSize={30} />
+                  {/* GRAFICO ROW */}
+                  <div className="widget fade-in-up delay-2" style={{ marginBottom: '1.5rem', padding: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Análisis Comparativo por Material</h3>
+                      <div style={{ display: 'flex', gap: '15px', fontSize: '13px' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--neon-blue)'}}></div> Sistema</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--neon-cyan)'}}></div> Físico</span>
+                      </div>
+                    </div>
+                    
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart data={processedData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                        <XAxis dataKey={catCol} tick={{fill: '#8b95a5', fontSize: 12}} axisLine={false} tickLine={false} dy={15} />
+                        <YAxis tick={{fill: '#8b95a5', fontSize: 12}} axisLine={false} tickLine={false} />
+                        <Tooltip 
+                          cursor={{fill: 'rgba(255,255,255,0.02)'}}
+                          contentStyle={{ backgroundColor: 'rgba(10,13,20,0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(10px)', color: 'white' }} 
+                        />
+                        <Bar dataKey="ValorSistema" name="JD Edwards" fill="var(--neon-blue)" radius={[6, 6, 0, 0]} barSize={15} />
+                        <Bar dataKey="ValorFisico" name="Planta" fill="var(--neon-cyan)" radius={[6, 6, 0, 0]} barSize={15} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
 
-                  <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                    <div style={{ padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
-                      <h3 style={{ margin: 0, color: '#1e293b', fontSize: '16px' }}>Detalle Analítico de Desviaciones</h3>
+                  {/* TABLA ROW */}
+                  <div className="widget fade-in-up delay-3" style={{ padding: '0', overflow: 'hidden' }}>
+                    <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Registro de Desviaciones</h3>
+                      {kpis.diferenciasCount > 0 ? 
+                        <span style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--alert-red)', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', border: '1px solid rgba(239,68,68,0.2)' }}>{kpis.diferenciasCount} Alertas Críticas</span>
+                        : <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--alert-green)', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' }}>Inventario Cuadrado</span>
+                      }
                     </div>
-                    <div style={{ overflowX: 'auto' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-                        <thead style={{ backgroundColor: '#f8fafc' }}>
+                    
+                    <div style={{ overflowX: 'auto', padding: '0 1.5rem 1.5rem 1.5rem' }}>
+                      <table style={{ marginTop: '1rem' }}>
+                        <thead>
                           <tr>
-                            <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{catCol}</th>
-                            <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{sysCol}</th>
-                            <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>{physCol}</th>
-                            <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>Desviación</th>
-                            <th style={{ padding: '1rem 1.5rem', color: '#475569', borderBottom: '2px solid #e2e8f0' }}>Estado</th>
+                            <th>{catCol}</th>
+                            <th>{sysCol}</th>
+                            <th>{physCol}</th>
+                            <th>Desviación</th>
+                            <th>Estado</th>
                           </tr>
                         </thead>
                         <tbody>
                           {processedData.map((row, i) => {
                             const tieneDiferencia = row.Diferencia !== 0;
                             return (
-                              <tr key={i} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: tieneDiferencia ? '#fef2f2' : 'white' }}>
-                                <td style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: '600' }}>{row[catCol]}</td>
-                                <td style={{ padding: '1rem 1.5rem', color: '#475569' }}>{row.ValorSistema}</td>
-                                <td style={{ padding: '1rem 1.5rem', color: '#475569' }}>{row.ValorFisico}</td>
-                                <td style={{ padding: '1rem 1.5rem', color: tieneDiferencia ? COLOR_ALERTA : '#10b981', fontWeight: '600' }}>
+                              <tr key={i}>
+                                <td style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white', fontWeight: '500' }}>
+                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: tieneDiferencia ? 'var(--alert-red)' : 'var(--neon-blue)' }}></div>
+                                  {row[catCol]}
+                                </td>
+                                <td>{row.ValorSistema}</td>
+                                <td>{row.ValorFisico}</td>
+                                <td style={{ color: tieneDiferencia ? 'var(--alert-red)' : 'var(--text-muted)', fontWeight: tieneDiferencia ? 'bold' : 'normal' }}>
                                   {row.Diferencia > 0 ? `+${row.Diferencia}` : row.Diferencia}
                                 </td>
-                                <td style={{ padding: '1rem 1.5rem' }}>
-                                  <span style={{ padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: '600', backgroundColor: tieneDiferencia ? '#fee2e2' : '#dcfce3', color: tieneDiferencia ? COLOR_ALERTA : '#10b981' }}>
-                                    {tieneDiferencia ? 'Revisión Requerida' : 'Conciliado'}
-                                  </span>
+                                <td>
+                                  {tieneDiferencia ? 
+                                    <span style={{ color: 'var(--alert-red)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px' }}><i className="ph ph-warning"></i> Ajuste Requerido</span> 
+                                    : <span style={{ color: 'var(--text-muted)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px' }}><i className="ph ph-check"></i> Conciliado</span>
+                                  }
                                 </td>
                               </tr>
                             )
@@ -254,6 +536,7 @@
                       </table>
                     </div>
                   </div>
+
                 </div>
               )}
             </div>
@@ -264,7 +547,7 @@
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(<App />);
     } catch (error) {
-      document.getElementById('root').innerHTML = '<div id="error-box"><h3>Oops! Error al compilar:</h3><p>' + error.message + '</p></div>';
+      document.getElementById('root').innerHTML = '<div id="error-box"><h3 style="margin-top:0">Error Crítico:</h3><p>' + error.message + '</p></div>';
     }
   </script>
 </body>

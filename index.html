@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova Analytics - Enterprise Edition</title>
+  <title>NEMS Analytics - Enterprise Edition 2.0</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,28 +28,16 @@
       --glow-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
     }
 
-    body {
-      margin: 0; padding: 0; font-family: 'Inter', sans-serif;
-      background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden;
-      background-image: radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
-      background-attachment: fixed;
-    }
-
+    body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; background-image: radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.08) 0%, transparent 40%), radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 40%), radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%); background-attachment: fixed; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-base); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulseNeon { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
-
-    .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
     
-    .widget {
-      background: var(--bg-widget); backdrop-filter: blur(16px); border: 1px solid var(--border-light);
-      border-radius: 20px; padding: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseNeon { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+    .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
+
+    .widget { background: var(--bg-widget); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
     .widget:hover { border-color: var(--border-highlight); box-shadow: var(--glow-shadow); }
 
     .app-container { display: flex; min-height: 100vh; }
@@ -58,18 +46,18 @@
     .nav-icon.active, .nav-icon:hover { background: rgba(59, 130, 246, 0.15); color: var(--neon-blue); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3); }
 
     .main-content { flex: 1; padding: 2rem 3rem; max-width: 1600px; margin: 0 auto; width: calc(100% - 80px); box-sizing: border-box; }
-    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-    .bento-col-2 { grid-column: span 2; }
-    @media (max-width: 1024px) { .bento-col-2 { grid-column: span 1; } }
+    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+    @media (max-width: 1024px) { .bento-grid { grid-template-columns: 1fr; } }
 
     .btn-primary { background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; animation: pulseNeon 2s infinite; }
     .btn-primary:hover { transform: scale(1.05); }
-    .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--neon-blue); }
 
     table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-    th { text-align: left; padding: 1rem; color: var(--text-muted); font-weight: 500; font-size: 13px; border-bottom: 1px solid var(--border-highlight); background: var(--bg-sidebar); }
-    td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
+    th { text-align: left; padding: 1rem; color: var(--text-muted); font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--border-highlight); background: var(--bg-sidebar); cursor: pointer; transition: color 0.2s; user-select: none; }
+    th:hover { color: white; }
+    td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; color: #e2e8f0; }
     tr:hover { background: rgba(255,255,255,0.05); }
 
     .input-premium { width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-light); border-radius: 10px; color: white; font-size: 14px; box-sizing: border-box; transition: all 0.3s; }
@@ -77,14 +65,24 @@
     select.input-premium option { background: var(--bg-sidebar); color: white; }
 
     .badge-secure { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--alert-green); border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
-    .insight-box { background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent); border-left: 4px solid var(--neon-blue); padding: 1rem 1.5rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; }
+    .insight-box { background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent); border-left: 4px solid var(--neon-blue); padding: 1.5rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; }
+
+    /* MODO IMPRESIÓN / PDF */
+    @media print {
+      body { background: white; color: black; background-image: none; }
+      .sidebar, .print-hide { display: none !important; }
+      .main-content { width: 100% !important; padding: 0 !important; margin: 0 !important; }
+      .widget { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; break-inside: avoid; filter: none !important; backdrop-filter: none !important; color: black !important; }
+      h1, h2, h3, h4, p, span, td, th { color: black !important; }
+      .insight-box { border-left-color: black !important; background: #f8f9fa !important; }
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo, useEffect } = React;
+    const { useState, useMemo } = React;
     const { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
     const CHART_COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#10b981', '#eab308', '#f43f5e'];
 
@@ -93,7 +91,9 @@
       const [activeTab, setActiveTab] = useState('dashboard');
       const [data, setData] = useState([]);
       const [columns, setColumns] = useState([]);
+      
       const [searchTerm, setSearchTerm] = useState('');
+      const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
       const [userConfig, setUserConfig] = useState({ xAxis: '', yAxis1: '', yAxis2: '' });
 
       const handleFileUpload = (e) => {
@@ -104,14 +104,15 @@
           try {
             const buffer = new Uint8Array(event.target.result);
             const workbook = XLSX.read(buffer, { type: 'array' });
-            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" }); // Capturar vacíos
             if (sheetData.length > 0) {
               setData(sheetData);
               setColumns(Object.keys(sheetData[0]));
               setUserConfig({ xAxis: '', yAxis1: '', yAxis2: '' });
+              setSortConfig({ key: null, direction: 'asc' });
               setActiveTab('dashboard');
             }
-          } catch (err) { alert("Error: " + err.message); }
+          } catch (err) { alert("Error al procesar el archivo: " + err.message); }
         };
         reader.readAsArrayBuffer(file);
       };
@@ -121,74 +122,99 @@
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Reporte NEMS");
-        XLSX.writeFile(wb, "Reporte_NEMS_Analytics.xlsx");
+        XLSX.writeFile(wb, "NEMS_Exportacion_Datos.xlsx");
       };
 
-      // MOTOR DE INTELIGENCIA
-      const { catCols, numCols, activeX, activeY1, activeY2, kpis, topItem } = useMemo(() => {
-        if (!data.length || !columns.length) return { catCols:[], numCols:[], activeX:null, activeY1:null, activeY2:null, kpis:null, topItem: null };
+      // MOTOR ANALÍTICO Y DE INSIGHTS
+      const analytics = useMemo(() => {
+        if (!data.length || !columns.length) return null;
         
         const textCols = columns.filter(col => typeof data[0][col] === 'string' || isNaN(Number(data[0][col])));
-        const numericCols = columns.filter(col => typeof data[0][col] === 'number' || !isNaN(Number(data[0][col])));
+        const numericCols = columns.filter(col => typeof data[0][col] === 'number' || !isNaN(Number(data[0][col]) && data[0][col] !== ""));
 
         const aX = userConfig.xAxis || (textCols.length > 0 ? textCols[0] : columns[0]);
         const aY1 = userConfig.yAxis1 || (numericCols.length > 0 ? numericCols[0] : columns[1] || columns[0]);
-        const aY2 = userConfig.yAxis2 || (numericCols.length > 1 ? numericCols[1] : '');
+        const aY2 = userConfig.yAxis2 || '';
 
-        let totalSum = 0; let maxVal = -Infinity; let topRecord = null;
-        
-        const processed = data.map(row => {
-          const val = Number(row[aY1]) || 0;
-          totalSum += val;
-          if (val > maxVal) { maxVal = val; topRecord = row[aX]; }
-          return { ...row, [aY1]: val, ...(aY2 ? { [aY2]: Number(row[aY2]) || 0 } : {}) };
-        });
+        let totalSum = 0; let maxVal = -Infinity; let topRecord = 'N/A';
+        let emptyCells = 0; const totalCells = data.length * columns.length;
 
-        // Generar datos agrupados para el gráfico de torta (Pie Chart)
-        const grouped = {};
-        processed.forEach(row => {
+        // Agrupación para limpiar repetidos (Pivot Table básica)
+        const groupedData = {};
+
+        data.forEach(row => {
+          // Evaluar salud de datos
+          columns.forEach(col => { if(row[col] === "" || row[col] === null || row[col] === undefined) emptyCells++; });
+          
           const key = row[aX] || 'Desconocido';
-          grouped[key] = (grouped[key] || 0) + row[aY1];
+          const val1 = Number(row[aY1]) || 0;
+          const val2 = aY2 ? (Number(row[aY2]) || 0) : 0;
+
+          if (!groupedData[key]) { groupedData[key] = { [aX]: key, [aY1]: 0, ...(aY2 && { [aY2]: 0 }) }; }
+          groupedData[key][aY1] += val1;
+          if (aY2) groupedData[key][aY2] += val2;
         });
-        const pieData = Object.keys(grouped).map(k => ({ name: k, value: grouped[k] }))
-                            .sort((a,b) => b.value - a.value).slice(0, 10); // Top 10 para que no sature
+
+        const processed = Object.values(groupedData);
+
+        processed.forEach(row => {
+          totalSum += row[aY1];
+          if (row[aY1] > maxVal) { maxVal = row[aY1]; topRecord = row[aX]; }
+        });
+
+        const dataHealth = ((totalCells - emptyCells) / totalCells * 100).toFixed(1);
+        const concentration = totalSum > 0 ? ((maxVal / totalSum) * 100).toFixed(1) : 0;
+
+        const pieData = [...processed].sort((a,b) => b[aY1] - a[aY1]).slice(0, 8).map(item => ({ name: item[aX], value: item[aY1] }));
 
         return { 
-          catCols: textCols, numCols: numericCols, activeX: aX, activeY1: aY1, activeY2: aY2,
-          topItem: topRecord,
+          aX, aY1, aY2,
           kpis: { 
-            count: processed.length, sum: totalSum, avg: processed.length ? (totalSum / processed.length).toFixed(2) : 0, 
-            max: maxVal === -Infinity ? 0 : maxVal, data: processed, pieData: pieData
+            count: data.length, sum: totalSum, avg: processed.length ? (totalSum / processed.length).toFixed(2) : 0, 
+            max: maxVal === -Infinity ? 0 : maxVal, topRecord, dataHealth, concentration, 
+            chartData: processed.sort((a,b) => b[aY1] - a[aY1]).slice(0, 30), pieData 
           } 
         };
       }, [data, columns, userConfig]);
 
-      const filteredData = useMemo(() => {
-        if (!searchTerm) return data;
-        return data.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase())));
-      }, [data, searchTerm]);
+      // MOTOR DE TABLA CON ORDENAMIENTO
+      const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+        setSortConfig({ key, direction });
+      };
+
+      const sortedAndFilteredData = useMemo(() => {
+        let sortableItems = [...data];
+        if (searchTerm) {
+          sortableItems = sortableItems.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase())));
+        }
+        if (sortConfig.key !== null) {
+          sortableItems.sort((a, b) => {
+            const aVal = a[sortConfig.key]; const bVal = b[sortConfig.key];
+            if (aVal === bVal) return 0;
+            const aNum = Number(aVal); const bNum = Number(bVal);
+            if (!isNaN(aNum) && !isNaN(bNum)) { return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum; }
+            return sortConfig.direction === 'asc' ? String(aVal).localeCompare(String(bVal)) : String(bVal).localeCompare(String(aVal));
+          });
+        }
+        return sortableItems;
+      }, [data, searchTerm, sortConfig]);
 
       if (!isLoggedIn) {
         return (
           <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="widget fade-in-up" style={{ width: '100%', maxWidth: '420px', padding: '3rem' }}>
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '28px', color: 'white', fontWeight: 'bold', boxShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
-                  <i className="ph-fill ph-chart-polar"></i>
-                </div>
-                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '24px' }}>NEMS Enterprise</h2>
+                <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '32px', color: 'white', fontWeight: 'bold' }}>N.</div>
+                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '24px' }}>NEMS Enterprise 2.0</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Business Intelligence Platform</p>
               </div>
               <form onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
-                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>ID Corporativo</label>
-                <input type="text" className="input-premium" defaultValue="admin" style={{ marginBottom: '1.2rem' }} />
-                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>Clave de Acceso</label>
+                <input type="text" className="input-premium" defaultValue="admin" style={{ marginBottom: '1rem' }} />
                 <input type="password" className="input-premium" defaultValue="••••••••" style={{ marginBottom: '2rem' }} />
-                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '16px', padding: '14px' }}>Autorizar Acceso</button>
+                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '16px', padding: '14px' }}>Acceder al Sistema</button>
               </form>
-              <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                <div className="badge-secure"><i className="ph-fill ph-shield-check"></i> Encriptación Local Activa</div>
-              </div>
             </div>
           </div>
         );
@@ -196,96 +222,95 @@
 
       return (
         <div className="app-container">
-          {/* SIDEBAR */}
           <div className="sidebar fade-in-up">
             <div style={{ color: 'white', fontSize: '24px', fontWeight: 'bold', marginBottom: '3rem' }}>N.</div>
             <div className={`nav-icon ${activeTab === 'dashboard' ? 'active' : ''}`} title="Dashboard" onClick={() => setActiveTab('dashboard')}><i className="ph ph-squares-four"></i></div>
-            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''}`} title="Explorador de Datos" onClick={() => setActiveTab('reports')}><i className="ph ph-table"></i></div>
+            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''}`} title="Auditoría de Datos" onClick={() => setActiveTab('reports')}><i className="ph ph-table"></i></div>
             <div className={`nav-icon ${activeTab === 'settings' ? 'active' : ''}`} title="Configuración de Motor" onClick={() => setActiveTab('settings')}><i className="ph ph-sliders-horizontal"></i></div>
-            <div style={{ marginTop: 'auto' }}>
+            <div style={{ marginTop: 'auto' }} className="print-hide">
               <div className="nav-icon" title="Cerrar Sesión" onClick={() => setIsLoggedIn(false)}><i className="ph ph-sign-out"></i></div>
             </div>
           </div>
 
           <div className="main-content">
-            {/* ENCABEZADO GERENCIAL */}
             <div className="widget fade-in-up" style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(90deg, rgba(20,26,40,0.9) 0%, rgba(10,13,20,0.9) 100%)', marginBottom: '2rem' }}>
               <div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginBottom: '8px' }}>
-                  <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '600' }}>Panel de Control Directivo</h1>
-                  <span className="badge-secure"><i className="ph-fill ph-lock-key"></i> Procesamiento Local Offline</span>
+                  <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '600' }}>Panel Analítico Integral</h1>
+                  <span className="badge-secure print-hide"><i className="ph-fill ph-lock-key"></i> Procesamiento Local Zero-Cloud</span>
                 </div>
-                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Motor dinámico NEMS. Tus datos no salen de este dispositivo.</p>
+                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Motor dinámico operativo. Inteligencia de negocios al instante.</p>
               </div>
-              <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
-                <button className="btn-primary"><i className="ph ph-microsoft-excel-logo" style={{ fontSize: '22px' }}></i> Cargar Origen de Datos</button>
-                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', height: '100%', width: '100%' }} />
+              <div style={{ display: 'flex', gap: '10px' }} className="print-hide">
+                {data.length > 0 && activeTab === 'dashboard' && (
+                  <button className="btn-secondary" onClick={() => window.print()} title="Exportar a PDF"><i className="ph ph-printer"></i> Reporte PDF</button>
+                )}
+                <div style={{ position: 'relative', overflow: 'hidden' }}>
+                  <button className="btn-primary"><i className="ph ph-microsoft-excel-logo" style={{ fontSize: '20px' }}></i> Subir Matriz (.xlsx)</button>
+                  <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', height: '100%', width: '100%' }} />
+                </div>
               </div>
             </div>
 
-            {/* TAB: DASHBOARD */}
-            {activeTab === 'dashboard' && data.length > 0 && activeY1 && (
+            {activeTab === 'dashboard' && analytics && (
               <div className="fade-in-up">
                 
-                {/* AI INSIGHT GENERATOR */}
                 <div className="insight-box">
-                  <div style={{ background: 'var(--neon-blue)', padding: '10px', borderRadius: '10px', display: 'flex' }}>
-                    <i className="ph-fill ph-lightbulb" style={{ color: 'white', fontSize: '24px' }}></i>
+                  <div style={{ background: 'var(--neon-blue)', padding: '12px', borderRadius: '12px', display: 'flex' }}>
+                    <i className="ph-fill ph-sparkle" style={{ color: 'white', fontSize: '24px' }}></i>
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-main)', fontSize: '15px' }}>Insight Automático NEMS</h4>
-                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>
-                      El motor detecta que <strong>{topItem}</strong> lidera en <strong>{activeY1}</strong>, concentrando el pico máximo operativo. 
-                      El promedio general del lote analizado se sitúa en <strong>{kpis.avg}</strong> unidades/valor.
+                    <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-main)', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      Insights NEMS AI
+                      {analytics.kpis.dataHealth < 90 && <span style={{ background: 'var(--alert-red)', color: 'white', padding: '2px 8px', borderRadius: '20px', fontSize: '10px' }}>Alerta de Datos</span>}
+                    </h4>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>
+                      El segmento líder es <strong>{analytics.kpis.topRecord}</strong>, concentrando un extraordinario <strong>{analytics.kpis.concentration}%</strong> del total del volumen de {analytics.aY1}. 
+                      La completitud estructural del reporte analizado es del <strong>{analytics.kpis.dataHealth}%</strong>.
                     </p>
                   </div>
                 </div>
 
-                {/* KPIs */}
-                <div className="bento-grid">
+                <div className="bento-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                   <div className="widget" style={{ borderTop: '3px solid var(--text-muted)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Volumen Total ({activeY1})</p>
-                    <h3 style={{ margin: 0, fontSize: '30px' }}>{kpis.sum.toLocaleString()}</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Suma {analytics.aY1}</p>
+                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.sum.toLocaleString()}</h3>
                   </div>
                   <div className="widget" style={{ borderTop: '3px solid var(--neon-cyan)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Promedio Operativo</p>
-                    <h3 style={{ margin: 0, fontSize: '30px', color: 'var(--text-main)' }}>{kpis.avg}</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Promedio {analytics.aY1}</p>
+                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.avg}</h3>
                   </div>
                   <div className="widget" style={{ borderTop: '3px solid var(--neon-purple)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Pico Máximo Registrado</p>
-                    <h3 style={{ margin: 0, fontSize: '30px', color: 'var(--text-main)' }}>{kpis.max.toLocaleString()}</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Registros / Filas</p>
+                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.count.toLocaleString()}</h3>
                   </div>
-                  <div className="widget" style={{ borderTop: '3px solid var(--neon-orange)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Registros Analizados</p>
-                    <h3 style={{ margin: 0, fontSize: '30px', color: 'var(--text-main)' }}>{kpis.count}</h3>
+                  <div className="widget" style={{ borderTop: `3px solid ${analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'var(--neon-orange)'}`}}>
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Salud de Datos</p>
+                    <h3 style={{ margin: 0, fontSize: '28px', color: analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'white' }}>{analytics.kpis.dataHealth}%</h3>
                   </div>
                 </div>
 
-                {/* CHARTS GRID */}
                 <div className="bento-grid" style={{ gridTemplateColumns: '2fr 1fr' }}>
-                  {/* MAIN BAR CHART */}
                   <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Tendencia / Comparativa Principal</h3>
+                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Top 30: Agrupación y Tendencia</h3>
                     <ResponsiveContainer width="100%" height={320}>
-                      <BarChart data={kpis.data.slice(0, 40)} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                      <BarChart data={analytics.kpis.chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey={activeX} tick={{fill: '#8b95a5', fontSize: 11}} axisLine={false} tickLine={false} />
+                        <XAxis dataKey={analytics.aX} tick={{fill: '#8b95a5', fontSize: 11}} axisLine={false} tickLine={false} />
                         <YAxis tick={{fill: '#8b95a5', fontSize: 11}} axisLine={false} tickLine={false} />
                         <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} contentStyle={{ backgroundColor: 'rgba(10,13,20,0.95)', border: '1px solid var(--border-highlight)', borderRadius: '12px' }} />
                         <Legend />
-                        <Bar dataKey={activeY1} fill="var(--neon-blue)" radius={[4, 4, 0, 0]} />
-                        {activeY2 && <Bar dataKey={activeY2} fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />}
+                        <Bar dataKey={analytics.aY1} fill="var(--neon-blue)" radius={[4, 4, 0, 0]} />
+                        {analytics.aY2 && <Bar dataKey={analytics.aY2} fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />}
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-
-                  {/* DISTRIBUTION PIE CHART */}
                   <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Distribución Top 10</h3>
+                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Distribución de Mercado (Top 8)</h3>
                     <ResponsiveContainer width="100%" height={320}>
                       <PieChart>
-                        <Pie data={kpis.pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={3} dataKey="value">
-                          {kpis.pieData.map((entry, index) => ( <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} /> ))}
+                        <Pie data={analytics.kpis.pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={3} dataKey="value">
+                          {analytics.kpis.pieData.map((entry, index) => ( <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} /> ))}
                         </Pie>
                         <Tooltip contentStyle={{ backgroundColor: 'rgba(10,13,20,0.95)', border: '1px solid var(--border-highlight)', borderRadius: '8px' }} />
                       </PieChart>
@@ -295,88 +320,74 @@
               </div>
             )}
 
-            {/* TAB: REPORTES CON BUSCADOR Y EXPORTACIÓN */}
             {activeTab === 'reports' && data.length > 0 && (
               <div className="widget fade-in-up" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Explorador de Base de Datos</h3>
-                  
+                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Auditoría Cruda y Filtrado ({filteredData.length} registros)</h3>
                   <div style={{ display: 'flex', gap: '15px' }}>
                     <div style={{ position: 'relative' }}>
                       <i className="ph ph-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}></i>
-                      <input type="text" placeholder="Buscar registros..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-premium" style={{ paddingLeft: '35px', width: '250px' }} />
+                      <input type="text" placeholder="Búsqueda global..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-premium" style={{ paddingLeft: '35px', width: '280px' }} />
                     </div>
-                    <button onClick={exportToExcel} className="btn-secondary" title="Descargar vista actual en Excel">
-                      <i className="ph ph-download-simple"></i> Exportar
-                    </button>
+                    <button onClick={exportToExcel} className="btn-secondary" title="Exportar la vista actual"><i className="ph ph-download-simple"></i> Excel (.xlsx)</button>
                   </div>
                 </div>
-                
                 <div style={{ overflowX: 'auto', maxHeight: '65vh' }}>
                   <table style={{ width: '100%' }}>
                     <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                      <tr>{columns.map(col => <th key={col}>{col}</th>)}</tr>
+                      <tr>
+                        {columns.map(col => (
+                          <th key={col} onClick={() => requestSort(col)}>
+                            {col} {sortConfig.key === col ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                          </th>
+                        ))}
+                      </tr>
                     </thead>
                     <tbody>
-                      {filteredData.length > 0 ? filteredData.map((row, i) => (
+                      {sortedAndFilteredData.length > 0 ? sortedAndFilteredData.slice(0, 1000).map((row, i) => (
                         <tr key={i}>{columns.map(col => <td key={col}>{row[col]}</td>)}</tr>
-                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No hay resultados para la búsqueda.</td></tr>}
+                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Sin coincidencias.</td></tr>}
                     </tbody>
                   </table>
+                  {sortedAndFilteredData.length > 1000 && <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>*Limitado a los primeros 1000 resultados para rendimiento.</div>}
                 </div>
               </div>
             )}
 
-            {/* TAB: CONFIGURACIÓN */}
             {activeTab === 'settings' && data.length > 0 && (
               <div className="widget fade-in-up" style={{ maxWidth: '600px' }}>
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '18px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="ph-fill ph-sliders-horizontal" style={{ color: 'var(--neon-orange)' }}></i> Calibración del Motor Analítico
-                </h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '2rem' }}>Ajusta las variables dinámicas del modelo. Los gráficos y el motor de insights se recalcularán automáticamente en tiempo real basándose en tu selección.</p>
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '18px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}><i className="ph-fill ph-sliders-horizontal" style={{ color: 'var(--neon-orange)' }}></i> Calibración Manual</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '2rem' }}>Fuerza al motor analítico a utilizar columnas específicas para cruzar la información. El sistema agrupará y sumará automáticamente.</p>
                 
                 <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Categoría / Agrupador (Eje X)</label>
-                    <select className="input-premium" value={userConfig.xAxis || activeX} onChange={e => setUserConfig({...userConfig, xAxis: e.target.value})}>
-                      {columns.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Categoría Principal (Agrupador - Eje X)</label>
+                    <select className="input-premium" value={userConfig.xAxis || analytics?.aX} onChange={e => setUserConfig({...userConfig, xAxis: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica de Valor Principal (Eje Y 1)</label>
-                    <select className="input-premium" value={userConfig.yAxis1 || activeY1} onChange={e => setUserConfig({...userConfig, yAxis1: e.target.value})}>
-                      {columns.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica de Valor Primaria (Suma - Eje Y)</label>
+                    <select className="input-premium" value={userConfig.yAxis1 || analytics?.aY1} onChange={e => setUserConfig({...userConfig, yAxis1: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-
                   <div style={{ marginBottom: '2rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica Secundaria de Comparación (Opcional)</label>
-                    <select className="input-premium" value={userConfig.yAxis2 || activeY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}>
-                      <option value="">-- No usar segunda métrica --</option>
-                      {columns.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Métrica Secundaria (Comparativa Opcional)</label>
+                    <select className="input-premium" value={userConfig.yAxis2 || analytics?.aY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}><option value="">-- No incluir segunda métrica --</option>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-
-                  <button onClick={() => setActiveTab('dashboard')} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Aplicar Modelo y Ver Dashboard</button>
+                  <button onClick={() => setActiveTab('dashboard')} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Aplicar Modelo y Analizar</button>
                 </div>
               </div>
             )}
 
-            {/* ESTADO VACÍO */}
             {data.length === 0 && (
               <div className="widget fade-in-up" style={{ textAlign: 'center', padding: '5rem 2rem', background: 'transparent', border: '2px dashed var(--border-highlight)' }}>
-                <i className="ph-fill ph-file-dashed" style={{ fontSize: '56px', color: 'var(--border-highlight)', marginBottom: '1rem' }}></i>
-                <h3 style={{ margin: '0 0 10px 0', color: 'white', fontSize: '20px' }}>Sistema a la espera de datos</h3>
-                <p style={{ color: 'var(--text-muted)', margin: '0 0 2rem 0' }}>El entorno seguro está listo. Carga tu reporte Excel (.xlsx) o CSV en el botón superior derecho.</p>
+                <i className="ph-fill ph-hard-drives" style={{ fontSize: '56px', color: 'var(--border-highlight)', marginBottom: '1rem' }}></i>
+                <h3 style={{ margin: '0 0 10px 0', color: 'white', fontSize: '20px' }}>Sistema Analítico Preparado</h3>
+                <p style={{ color: 'var(--text-muted)', margin: '0 0 2rem 0' }}>El entorno seguro está aislado y listo para recibir matrices de datos masivas (.xlsx, .csv).</p>
               </div>
             )}
-
           </div>
         </div>
       );
     }
-
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>

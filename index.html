@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEMS Analytics - Enterprise Edition 3.0</title>
+  <title>NEMS OS - Business Intelligence</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
@@ -19,89 +19,117 @@
   <script src="https://unpkg.com/recharts@1.8.5/umd/Recharts.min.js"></script>
 
   <style>
+    /* VARIABLES ULTRA PREMIUM */
     :root {
-      --bg-base: #0a0d14; --bg-sidebar: #05070a; --bg-widget: rgba(20, 26, 40, 0.6);
-      --border-light: rgba(255, 255, 255, 0.05); --border-highlight: rgba(255, 255, 255, 0.15);
-      --text-main: #f8fafc; --text-muted: #8b95a5;
-      --neon-blue: #3b82f6; --neon-cyan: #06b6d4; --neon-purple: #8b5cf6; --neon-orange: #f97316;
-      --alert-red: #ef4444; --alert-green: #10b981;
-      --glow-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
-      --input-bg: rgba(0,0,0,0.3);
+      --bg-base: #030712; --bg-sidebar: #0b1121; --bg-widget: rgba(17, 24, 39, 0.7);
+      --border-light: rgba(255, 255, 255, 0.08); --border-highlight: rgba(255, 255, 255, 0.2);
+      --text-main: #f8fafc; --text-muted: #94a3b8;
+      
+      --brand-primary: #3b82f6; --brand-secondary: #8b5cf6; --brand-accent: #06b6d4;
+      --alert-success: #10b981; --alert-warning: #f59e0b; --alert-danger: #ef4444;
+      
+      --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+      --font-main: 'Plus Jakarta Sans', sans-serif;
     }
 
     [data-theme="light"] {
-      --bg-base: #f1f5f9; --bg-sidebar: #ffffff; --bg-widget: rgba(255, 255, 255, 0.85);
-      --border-light: rgba(0, 0, 0, 0.08); --border-highlight: rgba(0, 0, 0, 0.2);
-      --text-main: #0f172a; --text-muted: #475569;
-      --glow-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --input-bg: rgba(255,255,255,0.9);
+      --bg-base: #f8fafc; --bg-sidebar: #ffffff; --bg-widget: rgba(255, 255, 255, 0.9);
+      --border-light: rgba(0, 0, 0, 0.06); --border-highlight: rgba(0, 0, 0, 0.15);
+      --text-main: #0f172a; --text-muted: #64748b;
+      --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.05);
+      --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.1);
     }
 
-    body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
-    body[data-theme="dark"] { background-image: radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.05) 0%, transparent 40%), radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.05) 0%, transparent 40%); background-attachment: fixed; }
+    /* GLOBAL */
+    body { margin: 0; padding: 0; font-family: var(--font-main); background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; transition: background-color 0.5s ease; }
+    body[data-theme="dark"]::before { content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%); z-index: -1; pointer-events: none; }
     
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg-base); }
-    ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 4px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 10px; }
+
+    /* ANIMACIONES */
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes meshGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulseNeon { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
-    .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
+    .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
 
-    .widget { background: var(--bg-widget); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-    .widget:hover { border-color: var(--border-highlight); box-shadow: var(--glow-shadow); }
-
+    /* LOGIN SPLIT SCREEN */
+    .login-wrapper { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: var(--bg-base); }
+    .login-art { flex: 1.2; position: relative; background: linear-gradient(-45deg, #0f172a, #1e1b4b, #0f172a, #082f49); background-size: 400% 400%; animation: meshGradient 15s ease infinite; display: flex; flex-direction: column; justify-content: space-between; padding: 4rem; color: white; border-right: 1px solid var(--border-light); }
+    .login-art::after { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.05"/></svg>'); opacity: 0.4; mix-blend-mode: overlay; pointer-events: none; }
+    .login-form-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; }
+    
+    .glass-panel { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    
+    /* INTERFAZ PRINCIPAL */
     .app-container { display: flex; min-height: 100vh; }
-    .sidebar { width: 80px; background: var(--bg-sidebar); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 2rem 0; position: sticky; top: 0; height: 100vh; z-index: 50; transition: background 0.4s, border 0.4s; }
-    .nav-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 24px; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; }
-    .nav-icon.active, .nav-icon:hover:not(.disabled) { background: rgba(59, 130, 246, 0.15); color: var(--neon-blue); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3); }
+    .sidebar { width: 88px; background: var(--bg-sidebar); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 2rem 0; position: sticky; top: 0; height: 100vh; z-index: 50; transition: background 0.4s; box-shadow: 4px 0 24px rgba(0,0,0,0.02); }
+    .nav-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 24px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+    .nav-icon::after { content: ''; position: absolute; left: -20px; top: 50%; transform: translateY(-50%); width: 4px; height: 0; background: var(--brand-primary); border-radius: 0 4px 4px 0; transition: height 0.3s; }
+    .nav-icon.active { color: var(--brand-primary); background: rgba(59, 130, 246, 0.1); }
+    .nav-icon.active::after { height: 24px; }
+    .nav-icon:hover:not(.active):not(.disabled) { color: var(--text-main); background: var(--border-light); transform: translateY(-2px); }
     .nav-icon.disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .main-content { flex: 1; padding: 2rem 3rem; max-width: 1600px; margin: 0 auto; width: calc(100% - 80px); box-sizing: border-box; }
-    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-    @media (max-width: 1024px) { .bento-grid { grid-template-columns: 1fr; } }
+    .main-content { flex: 1; padding: 2.5rem; max-width: 1800px; margin: 0 auto; width: calc(100% - 88px); box-sizing: border-box; }
+    
+    /* WIDGETS & BENTO GRID */
+    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+    .bento-2x { grid-column: span 2; }
+    @media (max-width: 1200px) { .bento-2x { grid-column: span 1; } }
 
-    .btn-primary { background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; animation: pulseNeon 2s infinite; }
-    .btn-primary:hover { transform: scale(1.05); }
-    .btn-secondary { background: rgba(139, 149, 165, 0.1); border: 1px solid var(--border-light); color: var(--text-main); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .btn-secondary:hover { background: rgba(139, 149, 165, 0.2); border-color: var(--neon-blue); }
+    .widget { background: var(--bg-widget); backdrop-filter: blur(24px); border: 1px solid var(--border-light); border-radius: 24px; padding: 1.75rem; transition: all 0.3s ease; box-shadow: var(--shadow-soft); position: relative; overflow: hidden; }
+    .widget::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--border-highlight), transparent); opacity: 0; transition: opacity 0.3s; }
+    .widget:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); border-color: var(--border-highlight); }
+    .widget:hover::before { opacity: 1; }
 
-    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-    th { text-align: left; padding: 1rem; color: var(--text-muted); font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--border-highlight); background: var(--bg-widget); cursor: pointer; user-select: none; transition: color 0.2s; }
-    th:hover { color: var(--neon-blue); }
-    td { padding: 1rem; border-bottom: 1px solid var(--border-light); font-size: 13px; color: var(--text-main); }
-    tr:hover { background: var(--border-light); }
+    /* BOTONES & INPUTS */
+    .btn-glow { position: relative; background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); border: none; color: white; padding: 14px 28px; border-radius: 14px; font-family: var(--font-main); font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; overflow: hidden; }
+    .btn-glow::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
+    .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px var(--brand-primary); }
+    .btn-glow:hover::before { left: 100%; }
 
-    .input-premium { width: 100%; padding: 12px 16px; background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 10px; color: var(--text-main); font-size: 14px; box-sizing: border-box; transition: all 0.3s; }
-    .input-premium:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-    select.input-premium option { background: var(--bg-sidebar); color: var(--text-main); }
+    .input-field { width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-light); border-radius: 12px; color: var(--text-main); font-family: var(--font-main); font-size: 15px; transition: all 0.3s; }
+    [data-theme="light"] .input-field { background: rgba(255,255,255,0.5); }
+    .input-field:focus { outline: none; border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
-    .badge-secure { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--alert-green); border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
-    .insight-box { background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent); border-left: 4px solid var(--neon-blue); padding: 1.5rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 15px; }
+    /* DROPZONE MAGNÉTICA */
+    .dropzone { border: 2px dashed var(--border-light); border-radius: 20px; padding: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+    .dropzone:hover { border-color: var(--brand-primary); background: rgba(59, 130, 246, 0.05); }
+    .dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-    @media print {
-      body { background: white; color: black; background-image: none; }
-      .sidebar, .print-hide { display: none !important; }
-      .main-content { width: 100% !important; padding: 0 !important; margin: 0 !important; }
-      .widget { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; break-inside: avoid; filter: none !important; backdrop-filter: none !important; }
-      h1, h2, h3, h4, p, span, td, th { color: black !important; }
-    }
+    /* TABLA DATA GRID */
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    th { text-align: left; padding: 1.2rem 1rem; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-highlight); cursor: pointer; transition: color 0.2s; position: sticky; top: 0; background: var(--bg-widget); backdrop-filter: blur(10px); z-index: 10; }
+    th:hover { color: var(--brand-primary); }
+    td { padding: 1.2rem 1rem; border-bottom: 1px solid var(--border-light); font-size: 14px; color: var(--text-main); transition: background 0.2s; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    [data-theme="light"] tr:hover td { background: rgba(0,0,0,0.02); }
+
+    .loader { width: 24px; height: 24px; border: 3px solid var(--border-light); border-top-color: var(--brand-primary); border-radius: 50%; animation: spin 1s linear infinite; }
   </style>
 </head>
 <body data-theme="dark">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo, useEffect } = React;
-    const { ComposedChart, Line, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
-    const CHART_COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#10b981', '#eab308', '#f43f5e'];
+    const { useState, useMemo, useEffect, useRef } = React;
+    const { ComposedChart, Line, Bar, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
+    
+    const CHART_COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#10b981', '#eab308'];
 
     function App() {
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [authState, setAuthState] = useState({ loggedIn: false, loading: false });
       const [activeTab, setActiveTab] = useState('dashboard');
       const [data, setData] = useState([]);
       const [columns, setColumns] = useState([]);
       const [theme, setTheme] = useState('dark');
+      const [isProcessing, setIsProcessing] = useState(false);
       
       const [searchTerm, setSearchTerm] = useState('');
       const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
@@ -109,43 +137,39 @@
 
       useEffect(() => { document.body.setAttribute('data-theme', theme); }, [theme]);
 
+      const handleLogin = (e) => {
+        e.preventDefault();
+        setAuthState({ ...authState, loading: true });
+        // Simular conexión segura al servidor
+        setTimeout(() => setAuthState({ loggedIn: true, loading: false }), 1500);
+      };
+
       const handleFileUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const buffer = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(buffer, { type: 'array' });
-            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
-            if (sheetData.length > 0) {
-              setData(sheetData);
-              setColumns(Object.keys(sheetData[0]));
-              setUserConfig({ xAxis: '', yAxis1: '', yAxis2: '' });
-              setSortConfig({ key: null, direction: 'asc' });
-              setActiveTab('dashboard');
-            }
-          } catch (err) { alert("Error al procesar el archivo: " + err.message); }
-        };
-        reader.readAsArrayBuffer(file);
+        setIsProcessing(true);
+        
+        setTimeout(() => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const buffer = new Uint8Array(event.target.result);
+              const workbook = XLSX.read(buffer, { type: 'array' });
+              const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
+              if (sheetData.length > 0) {
+                setData(sheetData);
+                setColumns(Object.keys(sheetData[0]));
+                setUserConfig({ xAxis: '', yAxis1: '', yAxis2: '' });
+                setActiveTab('dashboard');
+              }
+            } catch (err) { alert("Error de integridad de archivo."); }
+            finally { setIsProcessing(false); }
+          };
+          reader.readAsArrayBuffer(file);
+        }, 800); // Fake delay for processing UX
       };
 
-      const handleTabNavigation = (tab) => {
-        if (data.length === 0) return;
-        setActiveTab(tab);
-      };
-
-      const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-
-      const exportToExcel = () => {
-        if (!data.length) return;
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Reporte NEMS");
-        XLSX.writeFile(wb, "NEMS_Exportacion_Datos.xlsx");
-      };
-
-      // MOTOR ANALÍTICO Y PREDICTIVO
+      // CORE MATEMÁTICO (Incluye Desviación Estándar y Radar)
       const analytics = useMemo(() => {
         if (!data.length || !columns.length) return null;
         
@@ -157,284 +181,319 @@
         const aY2 = userConfig.yAxis2 || '';
 
         let totalSum = 0; let maxVal = -Infinity; let topRecord = 'N/A';
-        let emptyCells = 0; const totalCells = data.length * columns.length;
         const groupedData = {};
 
+        // Agrupación y Sumatoria
         data.forEach(row => {
-          columns.forEach(col => { if(row[col] === "" || row[col] === null || row[col] === undefined) emptyCells++; });
-          
-          const key = row[aX] || 'Desconocido';
+          const key = row[aX] || 'N/A';
           const val1 = Number(row[aY1]) || 0;
           const val2 = aY2 ? (Number(row[aY2]) || 0) : 0;
-
-          if (!groupedData[key]) { groupedData[key] = { [aX]: key, [aY1]: 0, ...(aY2 && { [aY2]: 0 }) }; }
+          if (!groupedData[key]) groupedData[key] = { [aX]: key, [aY1]: 0, ...(aY2 && { [aY2]: 0 }) };
           groupedData[key][aY1] += val1;
           if (aY2) groupedData[key][aY2] += val2;
         });
 
-        let processed = Object.values(groupedData).sort((a,b) => b[aY1] - a[aY1]).slice(0, 30);
+        let processed = Object.values(groupedData).sort((a,b) => b[aY1] - a[aY1]).slice(0, 40);
         
-        // CÁLCULO DE REGRESIÓN LINEAL PARA TENDENCIA
-        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-        const n = processed.length;
+        // Matemáticas Avanzadas
+        let n = processed.length;
+        let sumX=0, sumY=0, sumXY=0, sumX2=0;
+        let varianceSum = 0;
         
         processed.forEach((item, idx) => {
           totalSum += item[aY1];
           if (item[aY1] > maxVal) { maxVal = item[aY1]; topRecord = item[aX]; }
-          sumX += idx;
-          sumY += item[aY1];
-          sumXY += (idx * item[aY1]);
-          sumX2 += (idx * idx);
+          sumX += idx; sumY += item[aY1]; sumXY += (idx * item[aY1]); sumX2 += (idx * idx);
         });
+
+        const avg = n > 0 ? totalSum / n : 0;
+        processed.forEach(item => { varianceSum += Math.pow(item[aY1] - avg, 2); });
+        const stdDev = n > 0 ? Math.sqrt(varianceSum / n) : 0; // Desviación Estándar
 
         const slope = n > 1 ? (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) : 0;
         const intercept = n > 1 ? (sumY - slope * sumX) / n : 0;
 
-        // Inyectar tendencia al array
         processed.forEach((item, idx) => {
           item.Tendencia = parseFloat((slope * idx + intercept).toFixed(2));
+          // Fake forecasting para los últimos 3
+          if(idx > n - 4) item.Forecast = parseFloat((slope * (idx+2) + intercept).toFixed(2)); 
         });
 
-        const dataHealth = ((totalCells - emptyCells) / totalCells * 100).toFixed(1);
         const concentration = totalSum > 0 ? ((maxVal / totalSum) * 100).toFixed(1) : 0;
-        const pieData = [...processed].slice(0, 8).map(item => ({ name: item[aX], value: item[aY1] }));
+        const pieData = [...processed].slice(0, 6).map(item => ({ name: item[aX], value: item[aY1] }));
+        
+        // Datos para Radar Chart (Top 5 normalizados para visualización)
+        const radarData = [...processed].slice(0, 5).map(item => ({
+          subject: item[aX].toString().substring(0, 10),
+          A: item[aY1],
+          B: aY2 ? item[aY2] : item.Tendencia
+        }));
 
         return { 
           aX, aY1, aY2,
           kpis: { 
-            count: data.length, sum: totalSum, avg: processed.length ? (totalSum / processed.length).toFixed(2) : 0, 
-            max: maxVal === -Infinity ? 0 : maxVal, topRecord, dataHealth, concentration, 
-            chartData: processed, pieData, trendSlope: slope 
+            count: data.length, sum: totalSum, avg: avg.toFixed(2), stdDev: stdDev.toFixed(2),
+            max: maxVal, topRecord, concentration, trendSlope: slope,
+            chartData: processed, pieData, radarData
           } 
         };
       }, [data, columns, userConfig]);
 
-      const requestSort = (key) => {
-        let direction = 'asc';
-        if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
-        setSortConfig({ key, direction });
-      };
-
       const sortedAndFilteredData = useMemo(() => {
-        let sortableItems = [...data];
-        if (searchTerm) {
-          sortableItems = sortableItems.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase())));
-        }
-        if (sortConfig.key !== null) {
-          sortableItems.sort((a, b) => {
+        let sortable = [...data];
+        if (searchTerm) sortable = sortable.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm.toLowerCase())));
+        if (sortConfig.key) {
+          sortable.sort((a, b) => {
             const aVal = a[sortConfig.key]; const bVal = b[sortConfig.key];
             if (aVal === bVal) return 0;
             const aNum = Number(aVal); const bNum = Number(bVal);
-            if (!isNaN(aNum) && !isNaN(bNum)) { return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum; }
+            if (!isNaN(aNum) && !isNaN(bNum)) return sortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum;
             return sortConfig.direction === 'asc' ? String(aVal).localeCompare(String(bVal)) : String(bVal).localeCompare(String(aVal));
           });
         }
-        return sortableItems;
+        return sortable;
       }, [data, searchTerm, sortConfig]);
 
-      if (!isLoggedIn) {
+      // VISTA DE LOGIN (SPLIT SCREEN)
+      if (!authState.loggedIn) {
         return (
-          <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="widget fade-in-up" style={{ width: '100%', maxWidth: '420px', padding: '3rem' }}>
-              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, var(--neon-blue), var(--neon-cyan))', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '28px', color: 'white', fontWeight: 'bold', boxShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
-                  <i className="ph-fill ph-chart-polar"></i>
-                </div>
-                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '24px' }}>NEMS Enterprise 3.0</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Plataforma Analítica Predictiva</p>
+          <div className="login-wrapper">
+            <div className="login-art">
+              <div>
+                <div style={{ width: '60px', height: '60px', background: 'white', color: '#0f172a', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', fontWeight: 'bold', marginBottom: '1.5rem' }}>N.</div>
+                <h1 style={{ fontSize: '3.5rem', fontWeight: '700', margin: '0 0 1rem 0', lineHeight: '1.1' }}>Intelligence<br/>Amplified.</h1>
+                <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.7)', maxWidth: '400px' }}>NEMS OS transforma crudos operativos en decisiones estratégicas en milisegundos.</p>
               </div>
-              <form onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
-                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>ID Operativo</label>
-                <input type="text" className="input-premium" defaultValue="admin" style={{ marginBottom: '1.2rem' }} />
-                <label style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '5px', display: 'block' }}>Clave de Acceso</label>
-                <input type="password" className="input-premium" defaultValue="••••••••" style={{ marginBottom: '2rem' }} />
-                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '16px', padding: '14px' }}>Desplegar Motor NEMS</button>
-              </form>
-              <div style={{ textAlign: 'center', marginTop: '2rem' }}><div className="badge-secure"><i className="ph-fill ph-shield-check"></i> Encriptación Local Activa</div></div>
+              <div>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>© 2026 NEMS Tech Enterprise. Recreo, Catamarca.</p>
+              </div>
+            </div>
+            
+            <div className="login-form-container">
+              <div style={{ width: '100%', maxWidth: '400px' }} className="animate-slide-up">
+                <h2 style={{ fontSize: '28px', marginBottom: '8px' }}>Bienvenido al Sistema</h2>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem' }}>Ingresa tus credenciales operativas.</p>
+                
+                <form onSubmit={handleLogin}>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-muted)' }}>ID de Operador (Ej. JDE)</label>
+                    <input type="text" className="input-field" defaultValue="emanuel.sosa" required />
+                  </div>
+                  <div style={{ marginBottom: '2rem' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-muted)' }}>Clave de Acceso</label>
+                    <input type="password" className="input-field" defaultValue="••••••••" required />
+                  </div>
+                  
+                  <button type="submit" className="btn-glow" style={{ width: '100%', padding: '16px' }} disabled={authState.loading}>
+                    {authState.loading ? <div className="loader"></div> : 'Autorizar Sesión Segura'}
+                  </button>
+                </form>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', margin: '2rem 0' }}>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>O ingresa con</span>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }}></div>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <button className="btn-secondary" style={{ flex: 1, justifyContent: 'center' }}><i className="ph-fill ph-microsoft-logo" style={{ color: '#00a4ef', fontSize: '18px' }}></i> Azure AD</button>
+                  <button className="btn-secondary" style={{ flex: 1, justifyContent: 'center' }}><i className="ph-fill ph-google-logo" style={{ color: '#ea4335', fontSize: '18px' }}></i> Workspace</button>
+                </div>
+              </div>
             </div>
           </div>
         );
       }
 
+      // VISTA PRINCIPAL (DASHBOARD NEMS OS)
       return (
         <div className="app-container">
-          {/* SIDEBAR NAVEGABLE CORREGIDA */}
-          <div className="sidebar fade-in-up">
-            <div style={{ color: 'var(--text-main)', fontSize: '24px', fontWeight: 'bold', marginBottom: '3rem' }}>N.</div>
+          <div className="sidebar animate-slide-up">
+            <div style={{ color: 'var(--text-main)', fontSize: '26px', fontWeight: '800', marginBottom: '3rem' }}>N.</div>
+            <div className={`nav-icon ${activeTab === 'dashboard' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} onClick={() => data.length && setActiveTab('dashboard')} title="Workspace"><i className="ph-fill ph-squares-four"></i></div>
+            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} onClick={() => data.length && setActiveTab('reports')} title="Data Grid"><i className="ph-fill ph-table"></i></div>
+            <div className={`nav-icon ${activeTab === 'settings' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} onClick={() => data.length && setActiveTab('settings')} title="Motor Analítico"><i className="ph-fill ph-faders"></i></div>
             
-            <div className={`nav-icon ${activeTab === 'dashboard' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Dashboard" onClick={() => handleTabNavigation('dashboard')}><i className="ph ph-squares-four"></i></div>
-            <div className={`nav-icon ${activeTab === 'reports' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Auditoría de Datos" onClick={() => handleTabNavigation('reports')}><i className="ph ph-table"></i></div>
-            <div className={`nav-icon ${activeTab === 'settings' ? 'active' : ''} ${data.length === 0 ? 'disabled' : ''}`} title="Configuración de Motor" onClick={() => handleTabNavigation('settings')}><i className="ph ph-sliders-horizontal"></i></div>
-            
-            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }} className="print-hide">
-              <div className="nav-icon" title={`Cambiar a Tema ${theme === 'dark' ? 'Claro' : 'Oscuro'}`} onClick={toggleTheme}>
-                {theme === 'dark' ? <i className="ph ph-sun"></i> : <i className="ph ph-moon"></i>}
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div className="nav-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Modo Visual">
+                {theme === 'dark' ? <i className="ph-fill ph-sun"></i> : <i className="ph-fill ph-moon"></i>}
               </div>
-              <div className="nav-icon" title="Cerrar Sesión" onClick={() => setIsLoggedIn(false)}><i className="ph ph-sign-out"></i></div>
+              <div className="nav-icon" style={{ color: 'var(--alert-danger)' }} onClick={() => window.location.reload()} title="Desconectar"><i className="ph-fill ph-power"></i></div>
             </div>
           </div>
 
           <div className="main-content">
-            <div className="widget fade-in-up" style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: theme === 'dark' ? 'linear-gradient(90deg, rgba(20,26,40,0.9) 0%, rgba(10,13,20,0.9) 100%)' : 'var(--bg-widget)', marginBottom: '2rem' }}>
+            
+            {/* HEADER CON DROPZONE */}
+            <div className="animate-slide-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
               <div>
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginBottom: '8px' }}>
-                  <h1 style={{ margin: 0, fontSize: '26px', fontWeight: '600' }}>Panel Analítico Predictivo</h1>
-                  <span className="badge-secure print-hide"><i className="ph-fill ph-lock-key"></i> Zero-Cloud Processing</span>
-                </div>
-                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>Análisis impulsado por datos locales. Máxima confidencialidad.</p>
+                <h1 style={{ margin: '0 0 5px 0', fontSize: '32px', fontWeight: '700', letterSpacing: '-1px' }}>Centro de Mando Analítico</h1>
+                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '15px' }}>Arquitectura Zero-Cloud. Máximo rendimiento matemático local.</p>
               </div>
-              <div style={{ display: 'flex', gap: '10px' }} className="print-hide">
-                {data.length > 0 && activeTab === 'dashboard' && (
-                  <button className="btn-secondary" onClick={() => window.print()} title="Exportar a PDF"><i className="ph ph-printer"></i> Guardar PDF</button>
+              
+              <div className="dropzone" style={{ width: '350px' }}>
+                {isProcessing ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'var(--brand-primary)' }}><div className="loader"></div> Procesando tensores...</div>
+                ) : (
+                  <>
+                    <i className="ph-fill ph-file-arrow-up" style={{ fontSize: '32px', color: 'var(--brand-primary)' }}></i>
+                    <div>
+                      <h4 style={{ margin: '0 0 3px 0', fontSize: '14px' }}>Arrastra tu matriz o haz clic</h4>
+                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>.XLSX, .CSV (Soporta múltiples métricas)</p>
+                    </div>
+                    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} />
+                  </>
                 )}
-                <div style={{ position: 'relative', overflow: 'hidden' }}>
-                  <button className="btn-primary"><i className="ph ph-microsoft-excel-logo" style={{ fontSize: '20px' }}></i> Subir Matriz (.xlsx)</button>
-                  <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', height: '100%', width: '100%' }} />
-                </div>
               </div>
             </div>
 
-            {/* ESTADO VACÍO (Muestra inicial clara) */}
-            {data.length === 0 && (
-              <div className="widget fade-in-up" style={{ textAlign: 'center', padding: '6rem 2rem', background: 'transparent', border: '2px dashed var(--border-highlight)' }}>
-                <i className="ph-fill ph-hard-drives" style={{ fontSize: '56px', color: 'var(--border-highlight)', marginBottom: '1.5rem' }}></i>
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '22px' }}>Entorno Operativo Preparado</h3>
-                <p style={{ color: 'var(--text-muted)', margin: '0 auto 2rem auto', maxWidth: '500px', lineHeight: '1.6' }}>El motor NEMS de Machine Learning local está listo. Carga tu matriz de datos arriba a la derecha para iniciar la predicción de tendencias y el dashboard interactivo.</p>
+            {/* ESTADO VACÍO */}
+            {data.length === 0 && !isProcessing && (
+              <div className="animate-slide-up delay-1" style={{ height: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.7 }}>
+                <i className="ph-duotone ph-cube-transparent" style={{ fontSize: '120px', color: 'var(--border-highlight)', marginBottom: '1rem', animation: 'float 6s ease-in-out infinite' }}></i>
+                <h2 style={{ margin: '0 0 10px 0', fontWeight: '500' }}>Motor en Standby</h2>
+                <p style={{ color: 'var(--text-muted)' }}>Carga un set de datos para inicializar los módulos de Machine Learning.</p>
               </div>
             )}
 
-            {/* TAB: DASHBOARD PREDICTIVO */}
+            {/* TAB: DASHBOARD */}
             {data.length > 0 && activeTab === 'dashboard' && analytics && (
-              <div className="fade-in-up">
+              <div className="animate-slide-up delay-1">
                 
-                <div className="insight-box">
-                  <div style={{ background: 'var(--neon-blue)', padding: '12px', borderRadius: '12px', display: 'flex' }}>
-                    <i className="ph-fill ph-robot" style={{ color: 'white', fontSize: '24px' }}></i>
+                {/* IA INSIGHT */}
+                <div className="widget" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '20px', borderLeft: '4px solid var(--brand-primary)' }}>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', fontSize: '24px' }}>
+                    <i className="ph-fill ph-brain"></i>
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      NEMS Predictive AI
-                      {analytics.kpis.trendSlope > 0 
-                        ? <span style={{ background: 'rgba(16,185,129,0.2)', color: 'var(--alert-green)', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', border: '1px solid var(--alert-green)' }}>Tendencia Positiva</span>
-                        : <span style={{ background: 'rgba(239,68,68,0.2)', color: 'var(--alert-red)', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', border: '1px solid var(--alert-red)' }}>Riesgo de Declive</span>
-                      }
+                    <h4 style={{ margin: '0 0 5px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      Síntesis Generada por Motor NEMS
+                      {analytics.kpis.trendSlope > 0 ? <span style={{ color: 'var(--alert-success)', fontSize: '12px', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '10px' }}><i className="ph-bold ph-trend-up"></i> Expansión</span> : <span style={{ color: 'var(--alert-warning)', fontSize: '12px', background: 'rgba(245,158,11,0.1)', padding: '2px 8px', borderRadius: '10px' }}><i className="ph-bold ph-trend-down"></i> Contracción</span>}
                     </h4>
-                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>
-                      El segmento líder es <strong>{analytics.kpis.topRecord}</strong> ({analytics.kpis.concentration}% del volumen). 
-                      La proyección matemática indica un escenario de <strong>{analytics.kpis.trendSlope > 0 ? 'crecimiento sostenido' : 'contracción operativa'}</strong> para los próximos ciclos de {analytics.aY1}.
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14.5px', lineHeight: '1.6' }}>
+                      Análisis completado sobre <strong>{analytics.kpis.count}</strong> registros. 
+                      El activo dominante es <strong>{analytics.kpis.topRecord}</strong> abarcando el <strong>{analytics.kpis.concentration}%</strong> de la matriz. 
+                      La desviación estándar indica una volatilidad de <strong>±{analytics.kpis.stdDev}</strong> respecto a la media.
                     </p>
                   </div>
                 </div>
 
-                <div className="bento-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-                  <div className="widget" style={{ borderTop: '3px solid var(--text-muted)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Volumen Consolidado</p>
-                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.sum.toLocaleString()}</h3>
+                {/* KPIs */}
+                <div className="bento-grid">
+                  <div className="widget">
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 5px 0', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Acumulado Bruto</p>
+                    <h2 style={{ margin: 0, fontSize: '36px', fontWeight: '700' }}>{analytics.kpis.sum.toLocaleString()}</h2>
                   </div>
-                  <div className="widget" style={{ borderTop: '3px solid var(--neon-cyan)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Media de Ejecución</p>
-                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.avg}</h3>
+                  <div className="widget">
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 5px 0', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Media Aritmética</p>
+                    <h2 style={{ margin: 0, fontSize: '36px', fontWeight: '700', color: 'var(--brand-primary)' }}>{analytics.kpis.avg}</h2>
                   </div>
-                  <div className="widget" style={{ borderTop: '3px solid var(--neon-orange)'}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Pico Operativo</p>
-                    <h3 style={{ margin: 0, fontSize: '28px' }}>{analytics.kpis.max.toLocaleString()}</h3>
+                  <div className="widget">
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 5px 0', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Pico Histórico</p>
+                    <h2 style={{ margin: 0, fontSize: '36px', fontWeight: '700', color: 'var(--brand-accent)' }}>{analytics.kpis.max.toLocaleString()}</h2>
                   </div>
-                  <div className="widget" style={{ borderTop: `3px solid ${analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'var(--neon-orange)'}`}}>
-                    <p style={{ color: 'var(--text-muted)', margin: '0 0 8px 0', fontSize: '12px', textTransform: 'uppercase', fontWeight: '600' }}>Integridad del Lote</p>
-                    <h3 style={{ margin: 0, fontSize: '28px', color: analytics.kpis.dataHealth >= 98 ? 'var(--alert-green)' : 'var(--text-main)' }}>{analytics.kpis.dataHealth}%</h3>
+                  <div className="widget">
+                    <p style={{ color: 'var(--text-muted)', margin: '0 0 5px 0', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Volatilidad (Desv. Est.)</p>
+                    <h2 style={{ margin: 0, fontSize: '36px', fontWeight: '700', color: 'var(--brand-secondary)' }}>±{analytics.kpis.stdDev}</h2>
                   </div>
                 </div>
 
-                <div className="bento-grid" style={{ gridTemplateColumns: '2fr 1fr' }}>
-                  {/* COMPOSED CHART (BARRAS + TENDENCIA) */}
-                  <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Análisis de Comportamiento y Proyección</h3>
+                {/* GRAFICOS AVANZADOS */}
+                <div className="bento-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                  
+                  {/* CHART PRINCIPAL (Ocupa 2 columnas) */}
+                  <div className="widget bento-2x">
+                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '600' }}>Regresión y Forecasting (<span style={{color:'var(--brand-primary)'}}>{analytics.aY1}</span>)</h3>
                     <ResponsiveContainer width="100%" height={320}>
-                      <ComposedChart data={analytics.kpis.chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                      <ComposedChart data={analytics.kpis.chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
                         <XAxis dataKey={analytics.aX} tick={{fill: 'var(--text-muted)', fontSize: 11}} axisLine={false} tickLine={false} />
                         <YAxis tick={{fill: 'var(--text-muted)', fontSize: 11}} axisLine={false} tickLine={false} />
-                        <Tooltip cursor={{fill: 'var(--border-light)'}} contentStyle={{ backgroundColor: 'var(--bg-widget)', border: '1px solid var(--border-highlight)', borderRadius: '12px', color: 'var(--text-main)' }} />
-                        <Legend />
-                        <Bar dataKey={analytics.aY1} name={`Volumen: ${analytics.aY1}`} fill="var(--neon-blue)" radius={[4, 4, 0, 0]} />
-                        {analytics.aY2 && <Bar dataKey={analytics.aY2} name={`Comparativo: ${analytics.aY2}`} fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />}
-                        <Line type="monotone" dataKey="Tendencia" name="Proyección IA" stroke="var(--neon-orange)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                        <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} contentStyle={{ backgroundColor: 'var(--bg-widget)', border: '1px solid var(--border-highlight)', borderRadius: '12px', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }} />
+                        <Bar dataKey={analytics.aY1} name="Volumen Real" fill="var(--brand-primary)" radius={[6, 6, 0, 0]} barSize={20} />
+                        <Line type="monotone" dataKey="Tendencia" name="Tendencia Matemática" stroke="var(--alert-warning)" strokeWidth={3} dot={false} />
+                        <Line type="step" dataKey="Forecast" name="Proyección Esperada" stroke="var(--brand-accent)" strokeWidth={2} strokeDasharray="5 5" dot={{r: 4}} />
                       </ComposedChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
+                  {/* RADAR CHART (Multidimensional) */}
                   <div className="widget">
-                    <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '16px', fontWeight: '500' }}>Participación / Market Share</h3>
-                    <ResponsiveContainer width="100%" height={320}>
-                      <PieChart>
-                        <Pie data={analytics.kpis.pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={3} dataKey="value">
-                          {analytics.kpis.pieData.map((entry, index) => ( <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} /> ))}
-                        </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: 'var(--bg-widget)', border: '1px solid var(--border-highlight)', borderRadius: '8px', color: 'var(--text-main)' }} />
-                      </PieChart>
+                    <h3 style={{ margin: '0 0 1rem 0', fontSize: '16px', fontWeight: '600' }}>Rendimiento Top 5 (Radar)</h3>
+                    <ResponsiveContainer width="100%" height={260}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="70%" data={analytics.kpis.radarData}>
+                        <PolarGrid stroke="var(--border-light)" />
+                        <PolarAngleAxis dataKey="subject" tick={{fill: 'var(--text-muted)', fontSize: 10}} />
+                        <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
+                        <Radar name={analytics.aY1} dataKey="A" stroke="var(--brand-primary)" fill="var(--brand-primary)" fillOpacity={0.5} />
+                        <Radar name="Variable B" dataKey="B" stroke="var(--brand-secondary)" fill="var(--brand-secondary)" fillOpacity={0.3} />
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--bg-widget)', border: 'none', borderRadius: '8px', color: 'var(--text-main)' }} />
+                      </RadarChart>
                     </ResponsiveContainer>
+                    <p style={{ textAlign: 'center', margin: 0, fontSize: '11px', color: 'var(--text-muted)' }}>Cruce dimensional de los 5 activos principales.</p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* TAB: REPORTES */}
-            {data.length > 0 && activeTab === 'reports' && (
-              <div className="widget fade-in-up" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '500' }}>Matriz de Datos Dinámica</h3>
+            {/* TAB: DATA GRID (Tabla con estilo premium) */}
+            {activeTab === 'reports' && data.length > 0 && (
+              <div className="widget animate-slide-up delay-1" style={{ padding: 0 }}>
+                <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 5px 0', fontSize: '18px', fontWeight: '600' }}>Data Grid Interactivo</h3>
+                    <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Mostrando {sortedAndFilteredData.length} registros en memoria.</p>
+                  </div>
                   <div style={{ display: 'flex', gap: '15px' }}>
                     <div style={{ position: 'relative' }}>
-                      <i className="ph ph-magnifying-glass" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}></i>
-                      <input type="text" placeholder="Filtrado rápido..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-premium" style={{ paddingLeft: '35px', width: '280px' }} />
+                      <i className="ph-bold ph-magnifying-glass" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}></i>
+                      <input type="text" placeholder="Filtrar matriz..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input-field" style={{ paddingLeft: '40px', width: '300px', borderRadius: '20px' }} />
                     </div>
-                    <button onClick={exportToExcel} className="btn-secondary" title="Exportar vista filtrada"><i className="ph ph-download-simple"></i> Exportar</button>
                   </div>
                 </div>
-                <div style={{ overflowX: 'auto', maxHeight: '65vh' }}>
-                  <table style={{ width: '100%' }}>
-                    <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                      <tr>
-                        {columns.map(col => (
-                          <th key={col} onClick={() => requestSort(col)}>
-                            {col} {sortConfig.key === col ? (sortConfig.direction === 'asc' ? ' ↑' : ' ↓') : ''}
-                          </th>
-                        ))}
-                      </tr>
+                
+                <div style={{ overflowX: 'auto', maxHeight: '60vh' }}>
+                  <table>
+                    <thead>
+                      <tr>{columns.map(col => <th key={col} onClick={() => requestSort(col)}>{col} {sortConfig.key === col ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>)}</tr>
                     </thead>
                     <tbody>
-                      {sortedAndFilteredData.length > 0 ? sortedAndFilteredData.slice(0, 1000).map((row, i) => (
+                      {sortedAndFilteredData.length > 0 ? sortedAndFilteredData.slice(0, 500).map((row, i) => (
                         <tr key={i}>{columns.map(col => <td key={col}>{row[col]}</td>)}</tr>
-                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No hay datos coincidentes con la búsqueda.</td></tr>}
+                      )) : <tr><td colSpan={columns.length} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>Cero coincidencias en el vector de búsqueda.</td></tr>}
                     </tbody>
                   </table>
                 </div>
               </div>
             )}
 
-            {/* TAB: AJUSTES */}
-            {data.length > 0 && activeTab === 'settings' && (
-              <div className="widget fade-in-up" style={{ maxWidth: '600px' }}>
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '18px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}><i className="ph-fill ph-sliders-horizontal" style={{ color: 'var(--neon-orange)' }}></i> Overrides del Motor Analítico</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '2rem' }}>Define parámetros estrictos para la regresión matemática y estructuración visual.</p>
+            {/* TAB: SETTINGS */}
+            {activeTab === 'settings' && data.length > 0 && (
+              <div className="widget animate-slide-up delay-1" style={{ maxWidth: '600px' }}>
+                <h3 style={{ margin: '0 0 5px 0', fontSize: '20px', fontWeight: '600' }}>Calibración del Modelo Numérico</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: '0 0 2rem 0' }}>Fuerza el comportamiento de los ejes cartesianos y radiales.</p>
                 
-                <div style={{ background: 'var(--bg-base)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
+                <div style={{ background: 'rgba(0,0,0,0.1)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-light)' }}>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Pivote de Agrupación (Eje X)</label>
-                    <select className="input-premium" value={userConfig.xAxis || analytics?.aX} onChange={e => setUserConfig({...userConfig, xAxis: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-muted)' }}>Eje de Agrupación (Dimensión Principal)</label>
+                    <select className="input-field" value={userConfig.xAxis || analytics?.aX} onChange={e => setUserConfig({...userConfig, xAxis: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Vector Primario de Volumen (Eje Y)</label>
-                    <select className="input-premium" value={userConfig.yAxis1 || analytics?.aY1} onChange={e => setUserConfig({...userConfig, yAxis1: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-muted)' }}>Vector de Rendimiento 1 (Volumen/Monto)</label>
+                    <select className="input-field" value={userConfig.yAxis1 || analytics?.aY1} onChange={e => setUserConfig({...userConfig, yAxis1: e.target.value})}>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-                  <div style={{ marginBottom: '2rem' }}>
-                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>Vector Secundario Comparativo</label>
-                    <select className="input-premium" value={userConfig.yAxis2 || analytics?.aY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}><option value="">-- Aislar vector secundario --</option>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                  <div style={{ marginBottom: '2.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: 'var(--text-muted)' }}>Vector de Rendimiento 2 (Para Radar/Comparativa)</label>
+                    <select className="input-field" value={userConfig.yAxis2 || analytics?.aY2 || ''} onChange={e => setUserConfig({...userConfig, yAxis2: e.target.value})}><option value="">-- Modo Singular (Sin 2da Variable) --</option>{columns.map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
-                  <button onClick={() => setActiveTab('dashboard')} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Aplicar Modelo y Procesar</button>
+                  
+                  <button onClick={() => setActiveTab('dashboard')} className="btn-glow" style={{ width: '100%' }}>
+                    <i className="ph-bold ph-cpu"></i> Recalcular Red Neuronal Local
+                  </button>
                 </div>
               </div>
             )}
+            
           </div>
         </div>
       );
